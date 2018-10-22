@@ -62,9 +62,10 @@ void Initiate_My_Players(player **pl, int players_number, int computer_players_n
 void advance(board b, int i, int j, player *current, SDL_Renderer **ren) {
 	int x, y, flag = FLAG_OFF, flag2 = FLAG_OFF, flag3 = FLAG_ON;
 	static int Game_terminator = FLAG_OFF;
-	bucket buc;
+	bucket buc, CTA;
 	buffer B;
 	binit(&buc);
+	binit(&CTA);
 	/*
 	 *      Another Method to do this. Renderer not needed. Fast; But animation not supported.	
 	 *	
@@ -111,20 +112,24 @@ void advance(board b, int i, int j, player *current, SDL_Renderer **ren) {
 					if(b[x][y].balls > b[x][y].capacity) {
 						flag3 = FLAG_ON;
 						if(x != 0) {
-							b[x - 1][y].p = current;
-							b[x - 1][y].balls++;
+							B.x = x - 1;
+							B.y = y;
+							addCell(&CTA, B);
 						}	
 						if(x != rows - 1) {
-							b[x + 1][y].balls++;
-							b[x + 1][y].p = current;
+							B.x = x + 1;
+							B.y = y;
+							addCell(&CTA, B);
 						}	
 						if(y != 0) {
-							b[x][y - 1].balls++;
-							b[x][y - 1].p = current;
+							B.x = x;
+							B.y = y - 1;
+							addCell(&CTA, B);
 						}		
 						if(y != columns - 1) {
-							b[x][y + 1].balls++;
-							b[x][y + 1].p = current;
+							B.x = x;
+							B.y = y + 1;
+							addCell(&CTA, B);
 						}
 						B.x = x;
 						B.y = y;
@@ -135,7 +140,13 @@ void advance(board b, int i, int j, player *current, SDL_Renderer **ren) {
 						b[x][y].p = NULL;	
 				}	
 			AD_AnimateScreen(ren, b, current, &buc);		
+			for(x = 0; x < storage(&CTA); x++) {
+				B = check(&CTA, x);
+				b[B.x][B.y].balls++;
+				b[B.x][B.y].p = current;
+			}
 			destroyBucket(&buc);
+			destroyBucket(&CTA);
 		}	
 	}	
 }		
