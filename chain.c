@@ -80,8 +80,7 @@ int main(int argc, char *argv[]) {
 		UpdateBoardStatus(&ren, b); 
 		SDL_RenderPresent(ren);
 		if(current->type != HUMAN) {
-				if(current->next != current) {
-					SDL_Delay(500); 
+				if(current->next != current) { 
 					SetMove(b ,current, &i, &j); 
 					advance(b, i, j, current, &ren);
 					if(moves >= players_number + computer_players_number)
