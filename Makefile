@@ -1,4 +1,4 @@
-game: chain.o backend_support.o visual_support.o computerplayer.o animation.o
+game: chain.o backend_support.o visual_support.o computerplayer.o animation.o 
 	cc chain.o backend_support.o computerplayer.o animation.o visual_support.o -lSDL2 -lm -o game
 computerplayer.o: computerplayer.c chain.h
 	cc computerplayer.c -c -Wall				
