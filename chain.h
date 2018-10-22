@@ -1,3 +1,5 @@
+#include "bucket.h"
+
 #define CELL_SIDE 70
 
 #define FLAG_OFF 0
@@ -19,7 +21,6 @@ struct cell {
 	int balls;
 	int capacity;
 	player *p;
-	int animate;
 };
 
 
@@ -36,7 +37,7 @@ void UpdateBoardStatus(SDL_Renderer **ren, board b);
 void DestroyPlayer(player **pl_add);
 void DestroyBoard(board *b);
 void AD_DrawCircle(SDL_Renderer **ren, float x, float y, float radius, int r, int g, int b, int a);
-void AD_AnimateScreen(SDL_Renderer **ren, board b, player *current);
+void AD_AnimateScreen(SDL_Renderer **ren, board b, player *current, bucket *buc);
 void SetMove(board b, player *current, int *i, int *j);
 
 /*unuseful functions used for checking neat gameplay and bug fixes */

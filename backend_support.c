@@ -21,7 +21,6 @@ void Initiate_My_Board(board *b) {
 		for(j = 0; j < columns; j++) {
 			(*b)[i][j].balls = 0;
 			(*b)[i][j].p = NULL;
-			(*b)[i][j].animate = FLAG_OFF;
 			if(i == 0 || i == (rows - 1)) {
 				if(j == 0 || j == (columns - 1))
 					(*b)[i][j].capacity = 1;
@@ -63,6 +62,9 @@ void Initiate_My_Players(player **pl, int players_number, int computer_players_n
 void advance(board b, int i, int j, player *current, SDL_Renderer **ren) {
 	int x, y, flag = FLAG_OFF, flag2 = FLAG_OFF, flag3 = FLAG_ON;
 	static int Game_terminator = FLAG_OFF;
+	bucket buc;
+	buffer B;
+	binit(&buc);
 	/*
 	 *      Another Method to do this. Renderer not needed. Fast; But animation not supported.	
 	 *	
@@ -90,14 +92,15 @@ void advance(board b, int i, int j, player *current, SDL_Renderer **ren) {
 		if(Game_terminator)
 			break;
 		else {
+			flag = flag2 = FLAG_OFF;
 			for(x = 0; x < rows && flag == FLAG_OFF; x++) {
 				for(y = 0; y < columns && flag == FLAG_OFF; y++) {
 					if(b[x][y].p != current && b[x][y].p != NULL)
 						flag = FLAG_ON;
 					if(b[x][y].balls == 3)
 						flag2 = FLAG_ON;	
-					if(x == (rows - 1) && y == (columns - 1) && flag2)
-						Game_terminator = FLAG_ON;
+					if(x == (rows - 1) && y == (columns - 1) && flag2) 
+						Game_terminator = FLAG_ON;	
 				}
 			if(b[rows - 1][columns - 1].p != current && b[rows - 1][columns - 1].p != NULL)
 				Game_terminator = FLAG_OFF;			
@@ -123,16 +126,16 @@ void advance(board b, int i, int j, player *current, SDL_Renderer **ren) {
 							b[x][y + 1].balls++;
 							b[x][y + 1].p = current;
 						}
-						b[x][y].animate = FLAG_ON;
+						B.x = x;
+						B.y = y;
+						addCell(&buc, B);
 						b[x][y].balls -= (b[x][y].capacity + 1);
 					}	
 					if(b[x][y].balls == 0) 
 						b[x][y].p = NULL;	
-				}
-			//AD_AnimateScreen(ren, b, current);		
-			for(x = 0; x < rows; x++)	
-				for(y = 0; y < columns; y++)
-					b[x][y].animate = FLAG_OFF;
+				}	
+			AD_AnimateScreen(ren, b, current, &buc);		
+			destroyBucket(&buc);
 		}	
 	}	
 }		
