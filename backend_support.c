@@ -35,7 +35,7 @@ void Initiate_My_Board(board *b) {
 	}
 }	
 
-void Initiate_My_Players(player **pl, int players_number, int computer_players_number) {
+player *Initiate_My_Players(player **pl, int players_number, int computer_players_number) {
 	int i;
 	*pl = (player *)malloc(sizeof(player) * (players_number + computer_players_number));
 	if(*pl == NULL) {
@@ -57,6 +57,7 @@ void Initiate_My_Players(player **pl, int players_number, int computer_players_n
 		else
 			(*pl)[i].type = BOT_HARD;			
 	}
+	return *pl;
 }
 
 void advance(board b, int i, int j, player *current, SDL_Renderer **ren) {

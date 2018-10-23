@@ -1,5 +1,7 @@
-game: chain.o backend_support.o visual_support.o computerplayer.o animation.o bucket.o
-	cc chain.o backend_support.o computerplayer.o animation.o visual_support.o bucket.o -lSDL2 -lm -o game
+game: chain.o backend_support.o gameplay.o visual_support.o computerplayer.o animation.o bucket.o
+	cc chain.o backend_support.o gameplay.o computerplayer.o animation.o visual_support.o bucket.o -lSDL2 -lm -o game
+gameplay.o: gameplay.c chain.h bucket.h
+	cc gameplay.c -c -Wall	
 computerplayer.o: computerplayer.c chain.h bucket.h
 	cc computerplayer.c -c -Wall				
 chain.o: chain.c chain.h bucket.h
