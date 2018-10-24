@@ -3,11 +3,23 @@
 
 extern int rows, columns;
 
-void START_THE_GAME(SDL_Renderer **ADD_ren, board *ADD_b, player **ADD_pl, int players_number, int computer_players_number, const int WINDOW_HEIGHT, const int WINDOW_WIDTH) {
+void START_THE_GAME(board *ADD_b, player **ADD_pl, int players_number, int computer_players_number) {
+	const int WINDOW_WIDTH = columns * CELL_SIDE;
+	const int WINDOW_HEIGHT = rows * CELL_SIDE + CELL_SIDE * 2;
+	SDL_Window *window;
+	SDL_Renderer *ren;	
+	if(!(window = SDL_CreateWindow("Chain Reaction Game", 100, 100, WINDOW_WIDTH + 2, WINDOW_HEIGHT, SDL_WINDOW_SHOWN))) {
+		fprintf(stderr, "Could not Create Window : %s\n", SDL_GetError());
+		exit(2);
+	}
+	if(!(ren = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC))) {
+		SDL_DestroyWindow(window);
+		fprintf(stderr, "could not Create Renderer : %s\n", SDL_GetError());
+		exit(3);
+	}
 	int i, j, moves = 0;
 	player *pl = *ADD_pl;
 	board b = *ADD_b;
-	SDL_Renderer *ren = *ADD_ren;
 	player *current = pl; 
 	SDL_Event e;
 	STAT gamestat = PLAYING; 
@@ -58,5 +70,7 @@ void START_THE_GAME(SDL_Renderer **ADD_ren, board *ADD_b, player **ADD_pl, int p
 		}
 		SDL_Delay(1000 / 30);
 	}
+	SDL_DestroyRenderer(ren);
+	SDL_DestroyWindow(window);	
 }
 

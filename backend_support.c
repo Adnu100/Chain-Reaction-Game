@@ -35,29 +35,29 @@ void Initiate_My_Board(board *b) {
 	}
 }	
 
-player *Initiate_My_Players(player **pl, int players_number, int computer_players_number) {
+player *Create_Player_Row(int players_number, int computer_players_number) {
 	int i;
-	*pl = (player *)malloc(sizeof(player) * (players_number + computer_players_number));
-	if(*pl == NULL) {
+	player *pl = (player *)malloc(sizeof(player) * (players_number + computer_players_number));
+	if(pl == NULL) {
 		printf("Not Enough Ram!!!\n");
 			exit(4);
 	}
 	for(i = 0; i < (players_number + computer_players_number); i++) {
-		(*pl)[i].number = i + 1;
+		pl[i].number = i + 1;
 		//test scanf
 		printf("RGBA values of player %d : ", i + 1);
-		scanf("%d%d%d%d", &(*pl)[i].r, &(*pl)[i].g, &(*pl)[i].b, &(*pl)[i].a);
+		scanf("%d%d%d%d", &pl[i].r, &pl[i].g, &pl[i].b, &pl[i].a);
 		//test ends
 		if(i != players_number + computer_players_number - 1)
-			(*pl)[i].next = &(*pl)[i + 1];
+			pl[i].next = &pl[i + 1];
 		else
-			(*pl)[i].next = &(*pl)[0];
+			pl[i].next = &pl[0];
 		if(i < players_number)
-			(*pl)[i].type = HUMAN;
+			pl[i].type = HUMAN;
 		else
-			(*pl)[i].type = BOT_HARD;			
+			pl[i].type = BOT_HARD;			
 	}
-	return *pl;
+	return pl;
 }
 
 void advance(board b, int i, int j, player *current, SDL_Renderer **ren) {

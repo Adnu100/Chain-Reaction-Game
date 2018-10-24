@@ -28,11 +28,11 @@ struct cell {
 typedef struct cell **board;	
 
 /* game initializer function */
-void START_THE_GAME(SDL_Renderer **ADD_ren, board *ADD_b, player **ADD_pl, int players_number, int computer_players_number, const int WINDOW_HEIGHT, const int WINDOW_WIDTH);
+void START_THE_GAME(board *ADD_b, player **ADD_pl, int players_number, int computer_players_number);
 
 /* function declarations */
 void Initiate_My_Board(board *b);
-player *Initiate_My_Players(player **pl, int players_number, int computer_players_number);
+player *Create_Player_Row(int players_number, int computer_players_number);
 void advance(board b, int i, int j, player *current, SDL_Renderer **ren);
 void Delete_Out_Players(board b, player **grid, player **current_player_address);
 void AD_CreateBoard(SDL_Renderer **ren, int r, int g, int b, int a);
