@@ -5,34 +5,35 @@
 
 extern int rows, columns;
 
-void Initiate_My_Board(board *b) {
+board Initiate_My_Board(void) {
 	int i, j;
-	*b = (struct cell **)malloc(sizeof(struct cell *) * rows);
+	board b = (struct cell **)malloc(sizeof(struct cell *) * rows);
 	if(b == NULL) {
 		printf("Not Enough Ram!!!\n");
 		exit(4);
 	}	
 	for(i = 0; i < rows; i++) {
-		(*b)[i] = (struct cell *)malloc(sizeof(struct cell) * columns);
-		if((*b)[i] == NULL) {
+		b[i] = (struct cell *)malloc(sizeof(struct cell) * columns);
+		if(b[i] == NULL) {
 			printf("Not Enough Ram!!!\n");
 			exit(4);
 		}	
 		for(j = 0; j < columns; j++) {
-			(*b)[i][j].balls = 0;
-			(*b)[i][j].p = NULL;
+			b[i][j].balls = 0;
+			b[i][j].p = NULL;
 			if(i == 0 || i == (rows - 1)) {
 				if(j == 0 || j == (columns - 1))
-					(*b)[i][j].capacity = 1;
+					b[i][j].capacity = 1;
 				else
-					(*b)[i][j].capacity = 2;
+					b[i][j].capacity = 2;
 			}
 			else if(j == 0 || j == (columns - 1)) 
-				(*b)[i][j].capacity = 2;
+				b[i][j].capacity = 2;
 			else 
-				(*b)[i][j].capacity = 3;
+				b[i][j].capacity = 3;
 		}			
 	}
+	return b;
 }	
 
 player *Create_Player_Row(int players_number, int computer_players_number) {

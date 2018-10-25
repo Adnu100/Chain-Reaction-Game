@@ -5,8 +5,10 @@
 #define FLAG_OFF 0
 #define FLAG_ON 1
 
+/* Important Enumerations */
 typedef enum STAT {PLAYING, OVER} STAT;
 typedef enum player_type {HUMAN, BOT_EASIEST_MODE, BOT_EASY, BOT_MEDIUM, BOT_HARD, NIGHTMARE} player_type;
+typedef enum GAME_STATE {NEW_GAME, RESUME, QUIT, NONE} GAME_STATE;
 
 /* A structure containing player information */
 typedef struct player {
@@ -29,9 +31,10 @@ typedef struct cell **board;
 
 /* game initializer function */
 void START_THE_GAME(board *ADD_b, player **ADD_pl, int players_number, int computer_players_number);
+GAME_STATE startmenu(int *players_number, int *computer_players_number);
 
 /* function declarations */
-void Initiate_My_Board(board *b);
+board Initiate_My_Board(void);
 player *Create_Player_Row(int players_number, int computer_players_number);
 void advance(board b, int i, int j, player *current, SDL_Renderer **ren);
 void Delete_Out_Players(board b, player **grid, player **current_player_address);
