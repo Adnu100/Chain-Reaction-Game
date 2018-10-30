@@ -8,7 +8,7 @@
 /* Important Enumerations */
 typedef enum STAT {PLAYING, OVER} STAT;
 typedef enum player_type {HUMAN, BOT_EASIEST_MODE, BOT_EASY, BOT_MEDIUM, BOT_HARD, NIGHTMARE} player_type;
-typedef enum GAME_STATE {NEW_GAME, RESUME, QUIT, NONE} GAME_STATE;
+typedef enum GAME_STATE {NEW_GAME, RESUME, SAVE, QUIT, NONE} GAME_STATE;
 
 /* A structure containing player information */
 typedef struct player {
@@ -30,7 +30,7 @@ struct cell {
 typedef struct cell **board;	
 
 /* game initializer function */
-void START_THE_GAME(board *ADD_b, player **ADD_pl, int players_number, int computer_players_number);
+GAME_STATE START_THE_GAME(board *ADD_b, player **ADD_pl, int players_number, int computer_players_number);
 GAME_STATE startmenu(int *players_number, int *computer_players_number);
 
 /* function declarations */
@@ -45,6 +45,7 @@ void DestroyBoard(board *b);
 void AD_DrawCircle(SDL_Renderer **ren, float x, float y, float radius, int r, int g, int b, int a);
 void AD_AnimateScreen(SDL_Renderer **ren, board b, player *current, bucket *buc);
 void SetMove(board b, player *current, int *i, int *j);
+int Random(int Range_Start, int Range_End);
 
 /*unuseful functions used for checking neat gameplay and bug fixes */
 void printboard(board b);

@@ -3,7 +3,16 @@
 #include "chain.h"
 
 extern int rows, columns;
+extern SDL_Color *ColorRow;
 
+int center;
+TTF_Font *SansSherifFont;
+SDL_Rect Rect1, Rect2;
+SDL_Texture *savegame, *create_new_game;
+
+SDL_Color Red = {255, 0, 0}, Green = {0, 255, 0}, Blue = {0, 0, 255}, Title_color = {255, 0, 255, 0}, White = {255, 255, 255, 0};
+
+/* The GUI-type Startmenu, will not be used when quick start */
 GAME_STATE startmenu(int *players_number, int *computer_players_number) {
 	if(TTF_Init()) {
 		fprintf(stderr, "Could not Initiate Fonts : %s\n", TTF_GetError());
@@ -21,7 +30,7 @@ GAME_STATE startmenu(int *players_number, int *computer_players_number) {
 		fprintf(stderr, "could not Create Renderer : %s\n", SDL_GetError());
 		exit(3);
 	}
-	TTF_Font *SansSherifFont = TTF_OpenFont("font.ttf", 50);
+	SansSherifFont = TTF_OpenFont("font.ttf", 50);
 	if(SansSherifFont == NULL) {
 		fprintf(stderr, "Could not find the font loader file : %s", TTF_GetError());
 		exit(5);
@@ -89,55 +98,56 @@ GAME_STATE startmenu(int *players_number, int *computer_players_number) {
 	SDL_DestroyTexture(newgame);
 	SDL_DestroyTexture(resume);
 	SDL_DestroyTexture(quit);
-	SDL_Texture *choose, *human, *computer, *count_row, *count_col, *p, *m;
-	sur = TTF_RenderText_Solid(SansSherifFont, "Players : ", Blue);
-	human = SDL_CreateTextureFromSurface(ren, sur);	
-	SDL_FreeSurface(sur);
-	sur = TTF_RenderText_Solid(SansSherifFont, "Computer Players : ", Blue);
-	computer = SDL_CreateTextureFromSurface(ren, sur);	
-	SDL_FreeSurface(sur);
-	sur = TTF_RenderText_Solid(SansSherifFont, "Rows : ", Blue);
-	count_row = SDL_CreateTextureFromSurface(ren, sur);	
-	SDL_FreeSurface(sur);
-	sur = TTF_RenderText_Solid(SansSherifFont, "Columns : ", Blue);
-	count_col = SDL_CreateTextureFromSurface(ren, sur);	
-	SDL_FreeSurface(sur);
-	sur = TTF_RenderText_Solid(SansSherifFont, "START GAME", Blue);
-	choose = SDL_CreateTextureFromSurface(ren, sur);	
-	SDL_FreeSurface(sur);
-	char plus[2] = "+", minus[2] = "-";	
-	sur = TTF_RenderText_Solid(SansSherifFont, plus, Green);
-	p = SDL_CreateTextureFromSurface(ren, sur);	
-	SDL_FreeSurface(sur);
-	sur = TTF_RenderText_Solid(SansSherifFont, minus, Red);
-	m = SDL_CreateTextureFromSurface(ren, sur);	
-	SDL_FreeSurface(sur);
-	char numbers[20][3];
-	int i, i1 = 1, i2 = 1, i3 = 5, i4 = 5, x, y;
-	for(i = 0; i < 10; i++) {
-		numbers[i][0] = '0' + i;
-		numbers[i][1] = '\0';
-	}	
-	for(i = 0; i < 10; i++) {
-		numbers[10 + i][0] = '1';
-		numbers[10 + i][1] = '0' + i;
-		numbers[10 + i][2] = '\0';
-	}
-	SDL_Texture *numpad[20];
-	for(i = 0; i < 20; i++) {
-		sur = TTF_RenderText_Solid(SansSherifFont, numbers[i], White);
-		numpad[i] = SDL_CreateTextureFromSurface(ren, sur);
-		SDL_FreeSurface(sur);
-	}
-	/* Declaring this much variables will consume space but will reduce time complexity */
-	SDL_Rect R11 = {10, 200, 180, 80}, R12 = {10, 300, 180, 80}, R13 = {10, 400, 180, 80}, R14 = {10, 500, 180, 80}, R15 = {180, 620, 280, 160}, R21 = {210, 200, 80, 80}, R22 = {320, 200, 80, 80}, R23 = {430, 200, 80, 80}, R31 = {210, 300, 80, 80}, R32 = {320, 300, 80, 80}, R33 = {430, 300, 80, 80}, R41 = {210, 400, 80, 80}, R42 = {320, 400, 80, 80}, R43 = {430, 400, 80, 80}, R51 = {210, 500, 80, 80}, R52 = {320, 500, 80, 80}, R53 = {430, 500, 80, 80}; 
-	flag = FLAG_ON;
 	if(Current_Game_state == NEW_GAME) {
+		SDL_Texture *choose, *human, *computer, *count_row, *count_col, *p, *m;
+		sur = TTF_RenderText_Solid(SansSherifFont, "Players : ", Blue);
+		human = SDL_CreateTextureFromSurface(ren, sur);	
+		SDL_FreeSurface(sur);
+		sur = TTF_RenderText_Solid(SansSherifFont, "Computer Players : ", Blue);
+		computer = SDL_CreateTextureFromSurface(ren, sur);	
+		SDL_FreeSurface(sur);
+		sur = TTF_RenderText_Solid(SansSherifFont, "Rows : ", Blue);
+		count_row = SDL_CreateTextureFromSurface(ren, sur);	
+		SDL_FreeSurface(sur);
+		sur = TTF_RenderText_Solid(SansSherifFont, "Columns : ", Blue);
+		count_col = SDL_CreateTextureFromSurface(ren, sur);	
+		SDL_FreeSurface(sur);
+		sur = TTF_RenderText_Solid(SansSherifFont, "START GAME", Blue);
+		choose = SDL_CreateTextureFromSurface(ren, sur);	
+		SDL_FreeSurface(sur);
+		char plus[2] = "+", minus[2] = "-";	
+		sur = TTF_RenderText_Solid(SansSherifFont, plus, Green);
+		p = SDL_CreateTextureFromSurface(ren, sur);	
+		SDL_FreeSurface(sur);
+		sur = TTF_RenderText_Solid(SansSherifFont, minus, Red);
+		m = SDL_CreateTextureFromSurface(ren, sur);	
+		SDL_FreeSurface(sur);
+		char numbers[20][3];
+		int i, i1 = 1, i2 = 1, i3 = 5, i4 = 5, x, y;
+		for(i = 0; i < 10; i++) {
+			numbers[i][0] = '0' + i;
+			numbers[i][1] = '\0';
+		}	
+		for(i = 0; i < 10; i++) {
+			numbers[10 + i][0] = '1';
+			numbers[10 + i][1] = '0' + i;
+			numbers[10 + i][2] = '\0';
+		}
+		SDL_Texture *numpad[20];
+		for(i = 0; i < 20; i++) {
+			sur = TTF_RenderText_Solid(SansSherifFont, numbers[i], White);
+			numpad[i] = SDL_CreateTextureFromSurface(ren, sur);
+			SDL_FreeSurface(sur);
+		}
+		/* Declaring this much variables will consume space but will reduce time complexity */
+		SDL_Rect R11 = {10, 200, 180, 80}, R12 = {10, 300, 180, 80}, R13 = {10, 400, 180, 80}, R14 = {10, 500, 180, 80}, R15 = {180, 620, 280, 160}, R21 = {210, 200, 80, 80}, R22 = {320, 200, 80, 80}, R23 = {430, 200, 80, 80}, R31 = {210, 300, 80, 80}, R32 = {320, 300, 80, 80}, R33 = {430, 300, 80, 80}, R41 = {210, 400, 80, 80}, R42 = {320, 400, 80, 80}, R43 = {430, 400, 80, 80}, R51 = {210, 500, 80, 80}, R52 = {320, 500, 80, 80}, R53 = {430, 500, 80, 80}; 
+		flag = FLAG_ON;
 		while(flag) {
-			if(SDL_PollEvent(&e)) {
+			while(SDL_PollEvent(&e)) {
 				switch(e.type) {
 					case SDL_QUIT:
 						flag = FLAG_OFF;
+						return QUIT;
 						break;
 					case SDL_MOUSEBUTTONDOWN:
 						x = e.button.x;
@@ -220,27 +230,99 @@ GAME_STATE startmenu(int *players_number, int *computer_players_number) {
 			SDL_RenderPresent(ren);
 			SDL_Delay(1000 / 60);
 		}
+		ColorRow = (SDL_Color *)malloc(sizeof(SDL_Color) * i1);
+		for(i = 0; i < 20; i++)
+			SDL_DestroyTexture(numpad[i]);
+		SDL_DestroyTexture(p);
+		SDL_DestroyTexture(m);
+		SDL_DestroyTexture(human);
+		SDL_DestroyTexture(computer);
+		SDL_DestroyTexture(count_row);
+		SDL_DestroyTexture(count_col);
+		SDL_DestroyTexture(choose);
+		flag = 1;
+		int ci, xi, yi, hueset = 0;
+		char line[32] = "Choose player - 1 color :";
+		sur = TTF_RenderText_Solid(SansSherifFont, line, White);
+		choose = SDL_CreateTextureFromSurface(ren, sur);
+		SDL_FreeSurface(sur);
+		R2.x = 10;
+		R2.y -= 80;
+		R2.w += 10;
+		SDL_Rect GO_Rect = {R2.x + R2.w + R2.h + 10, R2.y, 100, 100};
+		SDL_Texture *Go_tex;
+		sur = TTF_RenderText_Solid(SansSherifFont, "Select", White);
+		Go_tex = SDL_CreateTextureFromSurface(ren, sur);
+		SDL_FreeSurface(sur);
+		SDL_Color choosed = {255, 0, 0};
+		for(ci = 0; ci < i1 + i2; ) {
+			while(SDL_PollEvent(&e)) {
+				switch(e.type) {
+					case SDL_QUIT:
+						return QUIT;
+						break;
+					case SDL_MOUSEBUTTONDOWN:
+						x = e.button.x;
+						y = e.button.y;
+						if(x > R2.x && x < (R2.x + 255 * 2) && y > R2.y + R2.h && y < (R2.y + R2.h + 255 * 2)) {
+							choosed.r = (x - R2.x) / 2;
+							choosed.g = (y - R2.y - R2.h) / 2;
+							choosed.b = hueset;
+						}
+						else if(x > (R2.x + 270 * 2) && x < (R2.x + 270 * 2 + 40) && y > (R2.y + R2.h) && y < (R2.y + R2.h + 255 * 2))
+							hueset = (y - (R2.y + R2.h)) / 2;
+						else if(x > GO_Rect.x && x < GO_Rect.x + GO_Rect.w && y > GO_Rect.y && y < GO_Rect.y + GO_Rect.h) {
+							ColorRow[ci] = choosed;	
+							ci++;
+							sprintf(line, "Choose player - %d color :", ci + 1);
+							SDL_DestroyTexture(choose);
+							sur = TTF_RenderText_Solid(SansSherifFont, line, White);
+							choose = SDL_CreateTextureFromSurface(ren, sur);
+							SDL_FreeSurface(sur);
+							choosed.r = Random(0, 255);
+							choosed.g = Random(0, 255);
+							choosed.b = Random(0, 255);
+							hueset = Random(0, 255);
+						}
+						break;	
+				}		
+			}
+			SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
+			SDL_RenderClear(ren);
+			for(xi = 0; xi < 255 * 2; xi++)
+				for(yi = 0; yi < 255 * 2; yi++) {
+					SDL_SetRenderDrawColor(ren, xi / 2, yi / 2, hueset, 0);
+					SDL_RenderDrawPoint(ren, R2.x + xi, R2.y + R2.h + yi);
+				}
+			SDL_SetRenderDrawColor(ren, 0, 0, 255, 0);	
+			for(yi = 0, xi = 250; yi < 255 * 2; yi++, xi -= 0.5) {
+				if(xi < 0)
+					xi = 0;
+				SDL_SetRenderDrawColor(ren, 0, 0, yi / 2, xi);
+				SDL_RenderDrawLine(ren, R2.x + 270 * 2, R2.y + R2.h + yi, R2.x + 270 * 2 + 40, R2.y + R2.h + yi);
+			}	
+			AD_DrawCircle(&ren, R2.x + R2.w + R2.h / 2, R2.y + R2.h / 2, R2.h / 2 - 10, choosed.r, choosed.g, choosed.b, 0);	
+			SDL_RenderCopy(ren, title, NULL, &R1);	
+			SDL_RenderCopy(ren, choose, NULL, &R2);	
+			SDL_RenderCopy(ren, Go_tex, NULL, &GO_Rect);
+			SDL_SetRenderDrawColor(ren, 255, 255, 255, 0);
+			SDL_RenderDrawRect(ren, &GO_Rect);
+			SDL_RenderPresent(ren);
+			SDL_Delay(1000 / 60);	
+		}
+		*players_number = i1;
+		*computer_players_number = i2;
+		rows = i3;
+		columns = i4;
 	}
-	for(i = 0; i < 20; i++)
-		SDL_DestroyTexture(numpad[i]);
 	SDL_DestroyTexture(title);
-	SDL_DestroyTexture(p);
-	SDL_DestroyTexture(m);
-	SDL_DestroyTexture(human);
-	SDL_DestroyTexture(computer);
-	SDL_DestroyTexture(count_row);
-	SDL_DestroyTexture(count_col);
-	SDL_DestroyTexture(choose);
 	SDL_DestroyRenderer(ren);
 	SDL_DestroyWindow(window);
-	*players_number = i1;
-	*computer_players_number = i2;
-	rows = i3;
-	columns = i4;
 	return Current_Game_state;
 }
 
-void START_THE_GAME(board *b, player **pl, int players_number, int computer_players_number) {
+/* Actual game interface */
+GAME_STATE START_THE_GAME(board *b, player **pl, int players_number, int computer_players_number) {
 	const int WINDOW_WIDTH = columns * CELL_SIDE;
 	const int WINDOW_HEIGHT = rows * CELL_SIDE + CELL_SIDE * 2;
 	SDL_Window *window;
@@ -254,6 +336,22 @@ void START_THE_GAME(board *b, player **pl, int players_number, int computer_play
 		fprintf(stderr, "could not Create Renderer : %s\n", SDL_GetError());
 		exit(3);
 	}
+	SDL_Surface *sur;
+	sur = TTF_RenderText_Solid(SansSherifFont, "SAVE", Green);
+	savegame = SDL_CreateTextureFromSurface(ren, sur);
+	SDL_FreeSurface(sur);
+	sur = TTF_RenderText_Solid(SansSherifFont, "NEW GAME", Red);
+	create_new_game = SDL_CreateTextureFromSurface(ren, sur);
+	SDL_FreeSurface(sur);
+	if(columns % 2 == 0) 
+		center = CELL_SIDE * (columns / 2);
+	else 
+		center = CELL_SIDE * (columns / 2) + CELL_SIDE / 2;	
+	Rect1.x = center - 2 * CELL_SIDE;
+	Rect2.x = Rect1.x + 2 * CELL_SIDE + CELL_SIDE / 2;
+	Rect1.y = Rect2.y = CELL_SIDE * rows + CELL_SIDE / 2;
+	Rect1.w = Rect2.w = CELL_SIDE + CELL_SIDE / 2;
+	Rect1.h = Rect2.h = CELL_SIDE;
 	int i, j, moves = 0;
 	player *current = *pl; 
 	SDL_Event e;
@@ -279,7 +377,20 @@ void START_THE_GAME(board *b, player **pl, int players_number, int computer_play
 								Delete_Out_Players(*b, pl, &current); 		
 							moves++;
 						}
+						break;
 					}
+					i = e.button.x;
+					j = e.button.y;
+					if(i > Rect1.x && i < Rect1.x + Rect1.w && j > Rect1.y && j < Rect1.y + Rect1.h) {
+						SDL_DestroyRenderer(ren);
+						SDL_DestroyWindow(window);
+						return SAVE;
+					}
+					if(i > Rect2.x && i < Rect2.x + Rect2.w && j > Rect2.y && j < Rect2.y + Rect2.h) {
+						SDL_DestroyRenderer(ren);
+						SDL_DestroyWindow(window);
+						return NEW_GAME;
+					}	
 					break;
 				default :
 					break;
@@ -292,6 +403,12 @@ void START_THE_GAME(board *b, player **pl, int players_number, int computer_play
 		else 							
 			AD_CreateBoard(&ren, 255, 255, 255, 0);	 	 
 		UpdateBoardStatus(&ren, *b); 
+		SDL_SetRenderDrawColor(ren, 255, 255, 255, 0);
+		SDL_RenderCopy(ren, savegame, NULL, &Rect1);
+		SDL_RenderCopy(ren, create_new_game, NULL, &Rect2);
+		SDL_RenderDrawRect(ren, &Rect1);
+		SDL_RenderDrawRect(ren, &Rect2);
+		AD_DrawCircle(&ren, center, Rect1.y + CELL_SIDE / 2, CELL_SIDE / 2 - CELL_SIDE /10, current->r, current->g, current->b, current->a);
 		SDL_RenderPresent(ren);
 		if(current->type != HUMAN) {
 				if(current->next != current) { 
@@ -306,6 +423,9 @@ void START_THE_GAME(board *b, player **pl, int players_number, int computer_play
 		SDL_Delay(1000 / 30);
 	}
 	SDL_DestroyRenderer(ren);
-	SDL_DestroyWindow(window);	
+	SDL_DestroyWindow(window);
+	TTF_CloseFont(SansSherifFont);
+	TTF_Quit();
+	return QUIT;
 }
 

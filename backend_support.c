@@ -4,6 +4,7 @@
 #include "chain.h"
 
 extern int rows, columns;
+extern SDL_Color *ColorRow;
 
 board Initiate_My_Board(void) {
 	int i, j;
@@ -45,10 +46,10 @@ player *Create_Player_Row(int players_number, int computer_players_number) {
 	}
 	for(i = 0; i < (players_number + computer_players_number); i++) {
 		pl[i].number = i + 1;
-		//test scanf
-		printf("RGBA values of player %d : ", i + 1);
-		scanf("%d%d%d%d", &pl[i].r, &pl[i].g, &pl[i].b, &pl[i].a);
-		//test ends
+		pl[i].r = ColorRow[i].r;
+		pl[i].g = ColorRow[i].g;
+		pl[i].b = ColorRow[i].b;
+		pl[i].a = 0;
 		if(i != players_number + computer_players_number - 1)
 			pl[i].next = &pl[i + 1];
 		else
@@ -63,7 +64,7 @@ player *Create_Player_Row(int players_number, int computer_players_number) {
 
 void advance(board b, int i, int j, player *current, SDL_Renderer **ren) {
 	int x, y, flag = FLAG_OFF, flag2 = FLAG_OFF, flag3 = FLAG_ON;
-	static int Game_terminator = FLAG_OFF;
+	int Game_terminator = FLAG_OFF;
 	bucket buc, CTA;
 	buffer B;
 	binit(&buc);
