@@ -66,6 +66,8 @@ GAME_STATE startmenu(int *players_number, int *computer_players_number) {
 							Current_Game_state = NEW_GAME;	
 						if(e.button.y > 400 && e.button.y < 500) {
 							Current_Game_state = RESUME;
+							SDL_DestroyRenderer(ren);
+							SDL_DestroyWindow(window);
 							return Current_Game_state;
 						}	
 						if(e.button.y > 570 && e.button.y < 670) {

@@ -374,7 +374,7 @@ void SetMove(board b, player *current, int *i, int *j) {
 				*j = BEST_MOVE[count].by;			
 			}	
 			break;
-		case NIGHTMARE :
+		default:
 			break;				
 	}	
 	for(x = 0; x < rows; x++)

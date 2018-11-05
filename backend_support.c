@@ -261,11 +261,13 @@ void SaveGame(board b, player *pl, player *current, int players_number, int comp
 		strcpy(filename, "savedgame1.chain");
 		flag = FLAG_ON;
 	}	
-	fd = open(filename, O_WRONLY | O_CREAT, S_IRUSR, S_IWUSR);
+	fd = open(filename, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
 	if(flag == FLAG_ON)
 		free(filename);	
-	if(fd == -1) 
-		return;	
+	if(fd == -1) {
+		printf("Overwrite not done\n");
+		return;
+	}		
 	int i, j, nullbox = -1;
 	write(fd, &rows, sizeof(int));
 	write(fd, &columns, sizeof(int));

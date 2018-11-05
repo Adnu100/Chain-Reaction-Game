@@ -7,7 +7,7 @@
 
 /* Important Enumerations */
 typedef enum STAT {PLAYING, OVER} STAT;
-typedef enum player_type {HUMAN, BOT_EASIEST_MODE, BOT_EASY, BOT_MEDIUM, BOT_HARD, NIGHTMARE} player_type;
+typedef enum player_type {HUMAN, BOT_EASIEST_MODE, BOT_EASY, BOT_MEDIUM, BOT_HARD} player_type;
 typedef enum GAME_STATE {NEW_GAME, RESUME, SAVE, QUIT, NONE} GAME_STATE;
 
 /* A structure containing player information */
