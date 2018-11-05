@@ -1,4 +1,8 @@
 #include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <SDL2/SDL.h>
 #include "chain.h"
@@ -181,6 +185,138 @@ void Delete_Out_Players(board b, player **grid, player **current_player_address)
 		temp = temp->next;			
 	} while(!(flag));
 }	
+
+STAT ResumeGame(board *b, player **pl, player **playerstore, player **current, int *players_number, int *computer_players_number, char *filename) {
+	int fd;
+	int flag = FLAG_OFF;
+	if(filename == NULL) {
+		filename = (char *)malloc(sizeof(char) * 20);
+		strcpy(filename, "savedgame1.chain");
+		flag = FLAG_ON;
+	}	
+	fd = open(filename, O_RDONLY);
+	if(flag == FLAG_ON)
+		free(filename);
+	if(fd == -1) 
+		return OVER;
+	read(fd, &rows, sizeof(int));
+	read(fd, &columns, sizeof(int));
+	read(fd, players_number, sizeof(int));
+	read(fd, computer_players_number, sizeof(int));
+	lseek(fd, 1, SEEK_CUR);
+	int i, j;
+	ColorRow = (SDL_Color *)malloc(sizeof(SDL_Color) * (*players_number + *computer_players_number));
+	for(i = 0; i < *players_number + *computer_players_number; i++)
+		read(fd, &(ColorRow[i]), sizeof(SDL_Color));
+	lseek(fd, 1, SEEK_CUR);	
+	*b = Initiate_My_Board();
+	*pl = Create_Player_Row(*players_number, *computer_players_number);
+	*playerstore = *pl;
+	int connection, s;
+	char type[4];
+	for(i = 0; i < *players_number + *computer_players_number; i++) {
+		read(fd, &((*pl)[i].number), sizeof(int));
+		read(fd, type, sizeof(char) * 3);
+		type[3] = '\0';
+		if(strcmp(type, "HPL") == 0)
+			(*pl)[i].type = HUMAN;
+		else if(strcmp(type, "EST") == 0)
+			(*pl)[i].type = BOT_EASIEST_MODE;
+		else if(strcmp(type, "ESY") == 0)
+			(*pl)[i].type = BOT_EASY;		
+		else if(strcmp(type, "MED") == 0)
+			(*pl)[i].type = BOT_MEDIUM;	
+		else if(strcmp(type, "HRD") == 0)
+			(*pl)[i].type = BOT_HARD;		
+		read(fd, &((*pl)[i].r), sizeof(int));
+		read(fd, &((*pl)[i].g), sizeof(int));
+		read(fd, &((*pl)[i].b), sizeof(int));
+		read(fd, &((*pl)[i].a), sizeof(int));
+		read(fd, &connection, sizeof(int));
+		(*pl)[i].next = &((*pl)[connection - 1]);
+		lseek(fd, 1, SEEK_CUR);
+	}
+	for(i = 0; i < rows; i++)
+		for(j = 0; j < columns; j++) {
+			read(fd, &((*b)[i][j].balls), sizeof(int));
+			read(fd, &((*b)[i][j].capacity), sizeof(int));
+			read(fd, &s, sizeof(int));
+			if(s == -1)
+				(*b)[i][j].p = NULL;
+			else 
+				(*b)[i][j].p = &((*pl)[s - 1]);		
+			lseek(fd, 1, SEEK_CUR);	
+		}
+	read(fd, &s, sizeof(int));
+	*current = &((*pl)[s - 1]);	
+	close(fd);
+	return PLAYING;
+}
+
+void SaveGame(board b, player *pl, player *current, int players_number, int computer_players_number, char *filename) {
+	int fd;
+	int flag = FLAG_OFF;
+	if(filename == NULL) {
+		filename = (char *)malloc(sizeof(char) * 20);
+		strcpy(filename, "savedgame1.chain");
+		flag = FLAG_ON;
+	}	
+	fd = open(filename, O_WRONLY | O_CREAT, S_IRUSR, S_IWUSR);
+	if(flag == FLAG_ON)
+		free(filename);	
+	if(fd == -1) 
+		return;	
+	int i, j, nullbox = -1;
+	write(fd, &rows, sizeof(int));
+	write(fd, &columns, sizeof(int));
+	write(fd, &players_number, sizeof(int));	
+	write(fd, &computer_players_number, sizeof(int));
+	write(fd, "\n", sizeof(char));
+	for(i = 0; i < players_number + computer_players_number; i++)
+		write(fd, &(ColorRow[i]), sizeof(SDL_Color));
+	write(fd, "\n", sizeof(char));	
+	for(i = 0; i < players_number + computer_players_number; i++) {
+		write(fd, &(pl[i].number), sizeof(int));
+		switch(pl[i].type) {
+			case HUMAN:
+				write(fd, "HPL", sizeof(char) * 3);
+				break;
+			case BOT_EASIEST_MODE:
+				write(fd, "EST", sizeof(char) * 3);
+				break;
+			case BOT_EASY:
+				write(fd, "ESY", sizeof(char) * 3);	
+				break;
+			case BOT_MEDIUM:
+				write(fd, "MED", sizeof(char) * 3);	
+				break;
+			case BOT_HARD:
+				write(fd, "HRD", sizeof(char) * 3);	
+				break;
+			default:
+				break;	
+		}
+		write(fd, &(pl[i].r), sizeof(int));
+		write(fd, &(pl[i].g), sizeof(int));
+		write(fd, &(pl[i].b), sizeof(int));
+		write(fd, &(pl[i].a), sizeof(int));
+		write(fd, &(pl[i].next->number), sizeof(int));
+		write(fd, "\n", sizeof(char));
+	}
+	for(i = 0; i < rows; i++)
+		for(j = 0; j < columns; j++) {
+			write(fd, &(b[i][j].balls), sizeof(int));
+			write(fd, &(b[i][j].capacity), sizeof(int));
+			if(b[i][j].p != NULL)
+				write(fd, &(b[i][j].p->number), sizeof(int));
+			else 
+				write(fd, &nullbox, sizeof(int));	
+			write(fd, "\n", sizeof(char));	
+		}
+	write(fd, &(current->number), sizeof(int));	
+	write(fd, "\n", sizeof(char));	
+	close(fd);	
+}
 
 void DestroyPlayer(player **pl_add) {
 	free(*pl_add);

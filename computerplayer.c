@@ -364,8 +364,15 @@ void SetMove(board b, player *current, int *i, int *j) {
 						count++;
 					}
 			count = Random(0, count - 1);
-			*i = BEST_MOVE[count].bx;
-			*j = BEST_MOVE[count].by;			
+			if(BEST_MOVE[count].bx >= rows || BEST_MOVE[count].by >= columns)
+				do {
+					*i = Random(0, rows -1);
+					*j = Random(0, columns - 1);
+				} while(b[*i][*j].p != NULL && b[*i][*j].p->number != current->number);
+			else {	
+				*i = BEST_MOVE[count].bx;
+				*j = BEST_MOVE[count].by;			
+			}	
 			break;
 		case NIGHTMARE :
 			break;				

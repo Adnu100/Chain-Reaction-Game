@@ -12,6 +12,10 @@ typedef struct node {
 
 typedef node *bucket;
 
+/* each node is connected to the next node like 
+ * bucket -> |_| -> |_| -> |_| -> NULL
+ */ 
+
 /* Functions which will be needed */
 void binit(bucket *b);
 void addCell(bucket *b, buffer B);

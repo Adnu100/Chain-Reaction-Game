@@ -19,20 +19,22 @@ void UpdateBoardStatus(SDL_Renderer **ren, board b) {
 	for(i = 0; i < rows; i++) {
 		for(j = 0; j < columns; j++) {
 			switch(b[i][j].balls) {
-				case 0 :
+				case 0:
 					break;
-				case 1 :
+				case 1:
 					AD_DrawCircle(ren, CELL_SIDE * (j + 0.5), CELL_SIDE * (i + 0.5), CELL_SIDE * (28.0 / 80.0), (b[i][j].p)->r, (b[i][j].p)->g, (b[i][j].p)->b, (b[i][j].p)->a);
 					break;
-				case 2 :
+				case 2:
 					AD_DrawCircle(ren, CELL_SIDE * (j + 0.5) - CELL_SIDE * (12.0 / 80.0), CELL_SIDE * (i + 0.5) - CELL_SIDE * (12.0 / 80.0), CELL_SIDE * (21.0 / 80.0), (b[i][j].p)->r, (b[i][j].p)->g, (b[i][j].p)->b, (b[i][j].p)->a);
 					AD_DrawCircle(ren, CELL_SIDE * (j + 0.5) + CELL_SIDE * (12.0 / 80.0), CELL_SIDE * (i + 0.5) + CELL_SIDE * (12.0 / 80.0), CELL_SIDE * (21.0 / 80.0), (b[i][j].p)->r, (b[i][j].p)->g, (b[i][j].p)->b, (b[i][j].p)->a);
 					break;
-				default :
+				case 3:
 				 	AD_DrawCircle(ren, CELL_SIDE * (j + 0.5) - CELL_SIDE * (15.0 / 80.0), CELL_SIDE * (i + 0.5) - CELL_SIDE * (15.0 / 80.0), CELL_SIDE * (25.0 / 80.0), (b[i][j].p)->r, (b[i][j].p)->g, (b[i][j].p)->b, (b[i][j].p)->a);
 					AD_DrawCircle(ren, CELL_SIDE * (j + 0.5) + CELL_SIDE * (15.0 / 80.0), CELL_SIDE * (i + 0.5) - CELL_SIDE * (15.0 / 80.0), CELL_SIDE * (25.0 / 80.0), (b[i][j].p)->r, (b[i][j].p)->g, (b[i][j].p)->b, (b[i][j].p)->a);
 					AD_DrawCircle(ren, CELL_SIDE * (j + 0.5), CELL_SIDE * (i + 0.5) + CELL_SIDE * (15.0 / 80.0), CELL_SIDE * (25.0 / 80.0), (b[i][j].p)->r, (b[i][j].p)->g, (b[i][j].p)->b, (b[i][j].p)->a);
 					break;				 	
+				default:
+					break;	
 			}
 		}
 	}

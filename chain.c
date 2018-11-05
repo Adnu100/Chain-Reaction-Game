@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
 	/* Declare human players and computer players variables, a board and player row */
 	int players_number, computer_players_number;
 	board b = NULL;
-	player *pl, *pl2;
+	player *pl, *pl2, *current;
 	  
 	/* First ask user whether to start a new game or resume a game. For new game, define table rows, columns, 		 * human and computer players in a window.
 	 * Also, ask if user wants to quit.
@@ -31,9 +31,12 @@ int main(int argc, char *argv[]) {
 			b = Initiate_My_Board();
 			pl = Create_Player_Row(players_number, computer_players_number); 
 			pl2 = pl;
+			current = pl;
 			break;
 		case RESUME:
-			//code to extract game information from file	
+			/* extract the game information from a file into the board and player row */
+			if(ResumeGame(&b, &pl, &pl2, &current, &players_number, &computer_players_number, NULL) == OVER)
+				return 0;	
 			break;
 		default:
 			break;	
@@ -45,7 +48,7 @@ int main(int argc, char *argv[]) {
 	while(var == PLAYING) { 	
 		var = OVER;		
 		/* Call a function to start the game */
-		switch(START_THE_GAME(&b, &pl, players_number, computer_players_number)) {
+		switch(START_THE_GAME(&b, &pl, players_number, computer_players_number, &current)) {
 			case NEW_GAME:	
 				/* "goto" can be used (goto the beggining again to restart a new game). 
 				 * But sir told goto is bad, so using while loop
@@ -56,16 +59,20 @@ int main(int argc, char *argv[]) {
 				b = Initiate_My_Board();
 			 	pl = Create_Player_Row(players_number, computer_players_number);
 			 	pl2 = pl;
+			 	current = pl;
 			 	break;
 			case SAVE:
-			 	// code to save the game
+				/* save the game into a file */
+			 	SaveGame(b, pl2, current, players_number, computer_players_number, NULL);
+			 	DestroyPlayer(&pl2);			 	
+			 	DestroyBoard(&b);
 			 	break;		
 			case QUIT: 
 				/* board and player row memory is dynamically alloted. */
 				/* So before ending the game program, that memory is needed to free */  
 				/* Free the malloced Resources */
 				free(ColorRow);
-				DestroyPlayer(&pl2);
+				DestroyPlayer(&pl2);  
 				DestroyBoard(&b);
 				break;	
 			default:

@@ -64,8 +64,10 @@ GAME_STATE startmenu(int *players_number, int *computer_players_number) {
 					if(e.button.x > 180 && e.button.x < 470) {
 						if(e.button.y > 230 && e.button.y < 330)
 							Current_Game_state = NEW_GAME;	
-						if(e.button.y > 400 && e.button.y < 500)
+						if(e.button.y > 400 && e.button.y < 500) {
 							Current_Game_state = RESUME;
+							return Current_Game_state;
+						}	
 						if(e.button.y > 570 && e.button.y < 670) {
 							Current_Game_state = QUIT;
 							SDL_DestroyRenderer(ren);
@@ -230,7 +232,7 @@ GAME_STATE startmenu(int *players_number, int *computer_players_number) {
 			SDL_RenderPresent(ren);
 			SDL_Delay(1000 / 60);
 		}
-		ColorRow = (SDL_Color *)malloc(sizeof(SDL_Color) * i1);
+		ColorRow = (SDL_Color *)malloc(sizeof(SDL_Color) * (i1 + i2));
 		for(i = 0; i < 20; i++)
 			SDL_DestroyTexture(numpad[i]);
 		SDL_DestroyTexture(p);
@@ -322,7 +324,7 @@ GAME_STATE startmenu(int *players_number, int *computer_players_number) {
 }
 
 /* Actual game interface */
-GAME_STATE START_THE_GAME(board *b, player **pl, int players_number, int computer_players_number) {
+GAME_STATE START_THE_GAME(board *b, player **pl, int players_number, int computer_players_number, player **current) {
 	const int WINDOW_WIDTH = columns * CELL_SIDE;
 	const int WINDOW_HEIGHT = rows * CELL_SIDE + CELL_SIDE * 2;
 	SDL_Window *window;
@@ -352,8 +354,7 @@ GAME_STATE START_THE_GAME(board *b, player **pl, int players_number, int compute
 	Rect1.y = Rect2.y = CELL_SIDE * rows + CELL_SIDE / 2;
 	Rect1.w = Rect2.w = CELL_SIDE + CELL_SIDE / 2;
 	Rect1.h = Rect2.h = CELL_SIDE;
-	int i, j, moves = 0;
-	player *current = *pl; 
+	int i, j, moves = 0; 
 	SDL_Event e;
 	STAT gamestat = PLAYING; 
 	while(gamestat != OVER) {
@@ -363,18 +364,18 @@ GAME_STATE START_THE_GAME(board *b, player **pl, int players_number, int compute
 					gamestat = OVER;
 					break;
 				case SDL_MOUSEBUTTONDOWN :
-					if(current->next == current) {
+					if((*current)->next == (*current)) {
 						gamestat = OVER;
 						break;
 					}	
 					if(e.button.x < WINDOW_WIDTH && e.button.y < WINDOW_HEIGHT - CELL_SIDE * 2) { 
 						j = e.button.x / CELL_SIDE;
 						i = e.button.y / CELL_SIDE;
-						if((*b)[i][j].p == NULL || (*b)[i][j].p == current) {
-							advance(*b, i, j, current , &ren); 	
-							current = current->next;
+						if((*b)[i][j].p == NULL || (*b)[i][j].p == (*current)) {
+							advance(*b, i, j, (*current) , &ren); 	
+							(*current) = (*current)->next;
 							if(moves >= players_number + computer_players_number)
-								Delete_Out_Players(*b, pl, &current); 		
+								Delete_Out_Players(*b, pl, &(*current)); 		
 							moves++;
 						}
 						break;
@@ -384,6 +385,8 @@ GAME_STATE START_THE_GAME(board *b, player **pl, int players_number, int compute
 					if(i > Rect1.x && i < Rect1.x + Rect1.w && j > Rect1.y && j < Rect1.y + Rect1.h) {
 						SDL_DestroyRenderer(ren);
 						SDL_DestroyWindow(window);
+						TTF_CloseFont(SansSherifFont);
+						TTF_Quit();
 						return SAVE;
 					}
 					if(i > Rect2.x && i < Rect2.x + Rect2.w && j > Rect2.y && j < Rect2.y + Rect2.h) {
@@ -398,8 +401,8 @@ GAME_STATE START_THE_GAME(board *b, player **pl, int players_number, int compute
 		}	
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
 		SDL_RenderClear(ren);
-		if(current->next == current)
-			AD_CreateBoard(&ren, current->r, current->g, current->b, current->a); 	
+		if((*current)->next == (*current))
+			AD_CreateBoard(&ren, (*current)->r, (*current)->g, (*current)->b, (*current)->a); 	
 		else 							
 			AD_CreateBoard(&ren, 255, 255, 255, 0);	 	 
 		UpdateBoardStatus(&ren, *b); 
@@ -408,16 +411,16 @@ GAME_STATE START_THE_GAME(board *b, player **pl, int players_number, int compute
 		SDL_RenderCopy(ren, create_new_game, NULL, &Rect2);
 		SDL_RenderDrawRect(ren, &Rect1);
 		SDL_RenderDrawRect(ren, &Rect2);
-		AD_DrawCircle(&ren, center, Rect1.y + CELL_SIDE / 2, CELL_SIDE / 2 - CELL_SIDE /10, current->r, current->g, current->b, current->a);
+		AD_DrawCircle(&ren, center, Rect1.y + CELL_SIDE / 2, CELL_SIDE / 2 - CELL_SIDE /10, (*current)->r, (*current)->g, (*current)->b, (*current)->a);
 		SDL_RenderPresent(ren);
-		if(current->type != HUMAN) {
-				if(current->next != current) { 
-					SetMove(*b ,current, &i, &j); 
-					advance(*b, i, j, current, &ren);
+		if((*current)->type != HUMAN) {
+				if((*current)->next != (*current)) {
+					SetMove(*b , (*current), &i, &j);
+					advance(*b, i, j, (*current), &ren);
 					if(moves >= players_number + computer_players_number)
-						Delete_Out_Players(*b, pl, &current);
+						Delete_Out_Players(*b, pl, &(*current));
 					moves++;
-					current = current->next;	
+					(*current) = (*current)->next;	
 				}	
 		}
 		SDL_Delay(1000 / 30);
