@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
 	player *pl, *pl2, *current;
 	int players_number = -1, computer_players_number = -1;
 	char *savefile = NULL, *resumefile = NULL;
-	int QUICK_START_FLAG = FLAG_OFF, SOUND_FLAG = FLAG_ON, RES_FLAG = FLAG_ON;
+	int QUICK_START_FLAG = FLAG_OFF, SOUND_FLAG = FLAG_ON, RES_FLAG = FLAG_OFF;
 	
 	/* process the command line options first */
 	int opt, opt_index;
