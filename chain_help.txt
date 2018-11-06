@@ -1,0 +1,39 @@
+Chain Reaction Game :
+Created by - Adnesh Anil Dhamangaonkar
+
+A game for programmers when they get bored of programming. A chain 
+reaction game supporting unlimited human and computer players in 
+a board of any size. 
+
+Usage: ./project [options] [values]
+
+Mandatory arguments to long options are mandatory for short options too
+  -q --quick-start	quick start (without a start menu) game on a board
+  			with 5 rows and 5 columns (unless set) with 
+  			standard settings i.e. computer difficulty medium,
+  			1 human vs 1 computer player.
+  -r NUM		set the number of rows to NUM
+  -c NUM		set number of columns to NUM
+  -H NUM		set number of human players to NUM
+  -C NUM		set number of computer players to NUM
+  -s --save FILE	change default saved file name to "FILE.chain
+  -R --resume FILE	directly resume the game in FILE 
+  --resume-default	resume the last saved game in file "savedgame1.chain"
+  			(if exists else returns)
+  -D NUM		set computer player difficulty to NUM (NUM can be 
+  			any value between 1, 2, 3, 4. higher number indicates
+  			higher difficulty. if NUM is beyond 4, difficulty 
+  			is set to highest i.e. 4)
+  --sound-off		no sound will be played during game
+  -h --help		display help and exit
+  
+Exit Status:
+ 0 if OK,
+ 1 if SDL initialization fails,
+ 2 if could not create window,
+ 3 if could not create renderer,
+ 4 if TTF initialization fails,
+ 5 if font (.ttf) file is missing (or unable to open),
+ 6 if not enough required RAM for game in device
+ EXIT_FAILURE if invalid options are provided in command line
+ 

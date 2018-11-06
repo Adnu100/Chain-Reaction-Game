@@ -9,19 +9,20 @@
 
 extern int rows, columns;
 extern SDL_Color *ColorRow;
+extern player_type difficulty;
 
 board Initiate_My_Board(void) {
 	int i, j;
 	board b = (struct cell **)malloc(sizeof(struct cell *) * rows);
 	if(b == NULL) {
 		printf("Not Enough Ram!!!\n");
-		exit(4);
+		exit(6);
 	}	
 	for(i = 0; i < rows; i++) {
 		b[i] = (struct cell *)malloc(sizeof(struct cell) * columns);
 		if(b[i] == NULL) {
 			printf("Not Enough Ram!!!\n");
-			exit(4);
+			exit(6);
 		}	
 		for(j = 0; j < columns; j++) {
 			b[i][j].balls = 0;
@@ -46,14 +47,22 @@ player *Create_Player_Row(int players_number, int computer_players_number) {
 	player *pl = (player *)malloc(sizeof(player) * (players_number + computer_players_number));
 	if(pl == NULL) {
 		printf("Not Enough Ram!!!\n");
-			exit(4);
+			exit(6);
 	}
 	for(i = 0; i < (players_number + computer_players_number); i++) {
 		pl[i].number = i + 1;
-		pl[i].r = ColorRow[i].r;
-		pl[i].g = ColorRow[i].g;
-		pl[i].b = ColorRow[i].b;
-		pl[i].a = 0;
+		if(ColorRow == NULL) {
+			pl[i].r = Random(0, 255);
+			pl[i].g = Random(0, 255);
+			pl[i].b = Random(0, 255);
+			pl[i].a = 0;
+		}
+		else {	
+			pl[i].r = ColorRow[i].r;
+			pl[i].g = ColorRow[i].g;
+			pl[i].b = ColorRow[i].b;
+			pl[i].a = 0;
+		}	
 		if(i != players_number + computer_players_number - 1)
 			pl[i].next = &pl[i + 1];
 		else
@@ -61,7 +70,7 @@ player *Create_Player_Row(int players_number, int computer_players_number) {
 		if(i < players_number)
 			pl[i].type = HUMAN;
 		else
-			pl[i].type = BOT_HARD;			
+			pl[i].type = difficulty;			
 	}
 	return pl;
 }
@@ -228,8 +237,7 @@ STAT ResumeGame(board *b, player **pl, player **playerstore, player **current, i
 			(*pl)[i].type = BOT_MEDIUM;	
 		else if(strcmp(type, "HRD") == 0)
 			(*pl)[i].type = BOT_HARD;		
-		read(fd, &((*pl)[i].r), sizeof(int));
-		read(fd, &((*pl)[i].g), sizeof(int));
+		read(fd, &((*pl)[i].r), sizeof(int));		read(fd, &((*pl)[i].g), sizeof(int));
 		read(fd, &((*pl)[i].b), sizeof(int));
 		read(fd, &((*pl)[i].a), sizeof(int));
 		read(fd, &connection, sizeof(int));
@@ -330,4 +338,17 @@ void DestroyBoard(board *b) {
 		free((*b)[i]);
 	free(*b);
 }		
+
+void Display_help(void) {
+	int fd;
+	char b;
+	fd = open("chain_help.txt", O_RDONLY);
+	if(fd == -1) {
+		fprintf(stderr, "Could not find help.txt\n");
+		return;
+	}	
+	while(read(fd, &b, sizeof(char)))
+		printf("%c", b);
+	close(fd);
+}
 

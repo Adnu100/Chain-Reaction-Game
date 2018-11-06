@@ -1,0 +1,15 @@
+The list of resources from which the help is taken :
+
+Most of the help taken from:
+	https://wiki.libsdl.org
+
+Other websites:
+	1) https://www.gnu.org
+	2) https://stackoverflow.com
+	3) https://www.programiz.com
+	4) https://www.tutorialspoint.com
+	5) https://geeksforgeeks.org 
+	6) https://www.youtube.com (learning SDL2)	
+	
+Books:
+	1) The C Programming language - K & R (for revising file handling)

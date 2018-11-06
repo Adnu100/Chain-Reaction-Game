@@ -3,6 +3,7 @@
 #include "chain.h"
 
 extern int rows, columns;
+extern player_type difficulty;
 extern SDL_Color *ColorRow;
 
 int center;
@@ -12,15 +13,30 @@ SDL_Texture *savegame, *create_new_game;
 
 SDL_Color Red = {255, 0, 0}, Green = {0, 255, 0}, Blue = {0, 0, 255}, Title_color = {255, 0, 255, 0}, White = {255, 255, 255, 0};
 
+/* TTF initializer function */
+void TTF_Initialize_All(void) {
+	static int isinit = FLAG_ON;
+	if(isinit) {
+		if(TTF_Init()) {
+			fprintf(stderr, "Could not Initiate Fonts : %s\n", TTF_GetError());
+			exit(4);
+		}
+		SansSherifFont = TTF_OpenFont("font.ttf", 50);
+		if(SansSherifFont == NULL) {
+			fprintf(stderr, "Could not find the font loader file : %s", TTF_GetError());
+			exit(5);
+		}
+	}
+	isinit = FLAG_OFF;	
+}
+
 /* The GUI-type Startmenu, will not be used when quick start */
 GAME_STATE startmenu(int *players_number, int *computer_players_number) {
-	if(TTF_Init()) {
-		fprintf(stderr, "Could not Initiate Fonts : %s\n", TTF_GetError());
-		exit(4);
-	}
+	TTF_Initialize_All();
 	SDL_Window *window;
 	SDL_Renderer *ren;
-	SDL_Rect R1 = {30, 20, 580, 140}, R2 = {180, 230, 280, 100}, R3 = {180, 400, 280, 100}, R4 = {170, 570, 280, 100}; 
+	SDL_Rect R1 = {30, 20, 580, 140}, R2 = {180, 230, 280, 100}, R3 = {180, 400, 280, 100}, R4 = {170, 570, 280, 100};
+	SDL_Rect T = {30, 720, 580, 20}, Diff1 = {30, 750, 145, 50}, Diff2 = {175, 750, 145, 50}, Diff3 = {320, 750, 145, 50}, Diff4 = {465, 750, 145, 50};
 	if(!(window = SDL_CreateWindow("Chain Reaction Game", 100, 100, 640, 800, SDL_WINDOW_SHOWN))) {
 		fprintf(stderr, "Could not Create Window : %s\n", SDL_GetError());
 		exit(2);
@@ -30,13 +46,7 @@ GAME_STATE startmenu(int *players_number, int *computer_players_number) {
 		fprintf(stderr, "could not Create Renderer : %s\n", SDL_GetError());
 		exit(3);
 	}
-	SansSherifFont = TTF_OpenFont("font.ttf", 50);
-	if(SansSherifFont == NULL) {
-		fprintf(stderr, "Could not find the font loader file : %s", TTF_GetError());
-		exit(5);
-	}
 	SDL_Surface *sur;
-	SDL_Color Red = {255, 0, 0}, Green = {0, 255, 0}, Blue = {0, 0, 255}, Title_color = {255, 0, 255, 0}, White = {255, 255, 255, 0};
 	SDL_Texture *title, *newgame, *resume, *quit;
 	sur = TTF_RenderText_Solid(SansSherifFont, "-- Chain Reaction Game --", Title_color);
 	title = SDL_CreateTextureFromSurface(ren, sur);
@@ -51,54 +61,106 @@ GAME_STATE startmenu(int *players_number, int *computer_players_number) {
 	quit = SDL_CreateTextureFromSurface(ren, sur);	
 	SDL_FreeSurface(sur);
 	int flag = FLAG_ON;
-	GAME_STATE Current_Game_state = NONE;
+	GAME_STATE Current_Game_state = NEW_GAME;
 	SDL_Event e;
-	while(flag) {
-		if(SDL_PollEvent(&e)) {
-			switch(e.type) {
-				case SDL_QUIT:
-					Current_Game_state = QUIT;
-					flag = FLAG_OFF;
-					break;
-				case SDL_MOUSEBUTTONDOWN:
-					if(e.button.x > 180 && e.button.x < 470) {
-						if(e.button.y > 230 && e.button.y < 330)
-							Current_Game_state = NEW_GAME;	
-						if(e.button.y > 400 && e.button.y < 500) {
-							Current_Game_state = RESUME;
-							SDL_DestroyRenderer(ren);
-							SDL_DestroyWindow(window);
-							return Current_Game_state;
-						}	
-						if(e.button.y > 570 && e.button.y < 670) {
-							Current_Game_state = QUIT;
-							SDL_DestroyRenderer(ren);
-							SDL_DestroyWindow(window);
-							return Current_Game_state;
-						}	
+	SDL_Texture *tex1, *tex2, *tex3, *tex4, *th;
+	sur = TTF_RenderText_Solid(SansSherifFont, "_Computer Player Difficulty Level_", Title_color);
+	th = SDL_CreateTextureFromSurface(ren, sur);
+	SDL_FreeSurface(sur);
+	sur = TTF_RenderText_Solid(SansSherifFont, "1", White);
+	tex1 = SDL_CreateTextureFromSurface(ren, sur);
+	SDL_FreeSurface(sur);
+	sur = TTF_RenderText_Solid(SansSherifFont, "2", White);
+	tex2 = SDL_CreateTextureFromSurface(ren, sur);
+	SDL_FreeSurface(sur);
+	sur = TTF_RenderText_Solid(SansSherifFont, "3", White);
+	tex3 = SDL_CreateTextureFromSurface(ren, sur);
+	SDL_FreeSurface(sur);
+	sur = TTF_RenderText_Solid(SansSherifFont, "4", White);
+	tex4 = SDL_CreateTextureFromSurface(ren, sur);
+	SDL_FreeSurface(sur);
+	if(rows == -1 && columns == -1 && *players_number == -1 && *computer_players_number == -1)
+		while(flag) {
+			if(SDL_PollEvent(&e)) {
+				switch(e.type) {
+					case SDL_QUIT:
+						Current_Game_state = QUIT;
 						flag = FLAG_OFF;
-					}
-					break;	
-				default:
-					break;	
+						break;
+					case SDL_MOUSEBUTTONDOWN:
+						if(e.button.x > 180 && e.button.x < 470) {
+							if(e.button.y > 230 && e.button.y < 330) {
+								Current_Game_state = NEW_GAME;	
+								flag = FLAG_OFF;
+							}	
+							if(e.button.y > 400 && e.button.y < 500) {
+								Current_Game_state = RESUME;
+								SDL_DestroyRenderer(ren);
+								SDL_DestroyWindow(window);
+								flag = FLAG_OFF;
+								return Current_Game_state;
+							}	
+							if(e.button.y > 570 && e.button.y < 670) {
+								Current_Game_state = QUIT;
+								SDL_DestroyRenderer(ren);
+								SDL_DestroyWindow(window);
+								flag = FLAG_OFF;
+								return Current_Game_state;
+							}	
+						}
+						if(e.button.x > Diff1.x && e.button.y > Diff1.y && e.button.x < Diff1.x + Diff1.w && e.button.y < Diff1.y + Diff1.h)
+							difficulty = BOT_EASIEST_MODE;
+						if(e.button.x > Diff2.x && e.button.y > Diff2.y && e.button.x < Diff2.x + Diff2.w && e.button.y < Diff2.y + Diff2.h)
+							difficulty = BOT_EASY;
+						if(e.button.x > Diff3.x && e.button.y > Diff3.y && e.button.x < Diff3.x + Diff3.w && e.button.y < Diff3.y + Diff3.h)
+							difficulty = BOT_MEDIUM;
+						if(e.button.x > Diff4.x && e.button.y > Diff4.y && e.button.x < Diff4.x + Diff4.w && e.button.y < Diff4.y + Diff4.h)
+							difficulty = BOT_HARD;	
+						break;	
+					default:
+						break;	
+				}
 			}
+			SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
+			SDL_RenderClear(ren);
+			SDL_RenderCopy(ren, title, NULL, &R1);
+			SDL_RenderCopy(ren, newgame, NULL, &R2);
+			SDL_RenderCopy(ren, resume, NULL, &R3);
+			SDL_RenderCopy(ren, quit, NULL, &R4);
+			SDL_RenderCopy(ren, th, NULL, &T);
+			SDL_RenderCopy(ren, tex1, NULL, &Diff1);
+			SDL_RenderCopy(ren, tex2, NULL, &Diff2);
+			SDL_RenderCopy(ren, tex3, NULL, &Diff3);
+			SDL_RenderCopy(ren, tex4, NULL, &Diff4);
+			SDL_SetRenderDrawColor(ren, 200, 255, 200, 10);
+			SDL_RenderDrawLine(ren, 170, 210, 170, 710);
+			SDL_RenderDrawLine(ren, 170, 210, 470, 210);
+			SDL_RenderDrawLine(ren, 470, 710, 170, 710);
+			SDL_RenderDrawLine(ren, 470, 710, 470, 210);
+			SDL_RenderDrawLine(ren, 170, 350, 470, 350);
+			SDL_RenderDrawLine(ren, 170, 550, 470, 550);
+			SDL_RenderDrawRect(ren, &Diff1);
+			SDL_RenderDrawRect(ren, &Diff2);
+			SDL_RenderDrawRect(ren, &Diff3);
+			SDL_RenderDrawRect(ren, &Diff4);
+			SDL_SetRenderDrawColor(ren, 255, 0, 0, 0);
+			switch(difficulty) {
+				case BOT_EASIEST_MODE:
+					SDL_RenderDrawRect(ren, &Diff1);
+					break;
+				case BOT_EASY:
+					SDL_RenderDrawRect(ren, &Diff2);
+					break;
+				case BOT_MEDIUM:
+					SDL_RenderDrawRect(ren, &Diff3);
+					break;
+				default:
+					SDL_RenderDrawRect(ren, &Diff4);
+					break;			
+			}
+			SDL_RenderPresent(ren);
+			SDL_Delay(1000 / 60);
 		}
-		SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
-		SDL_RenderClear(ren);
-		SDL_RenderCopy(ren, title, NULL, &R1);
-		SDL_RenderCopy(ren, newgame, NULL, &R2);
-		SDL_RenderCopy(ren, resume, NULL, &R3);
-		SDL_RenderCopy(ren, quit, NULL, &R4);
-		SDL_SetRenderDrawColor(ren, 200, 255, 200, 10);
-		SDL_RenderDrawLine(ren, 170, 210, 170, 710);
-		SDL_RenderDrawLine(ren, 170, 210, 470, 210);
-		SDL_RenderDrawLine(ren, 470, 710, 170, 710);
-		SDL_RenderDrawLine(ren, 470, 710, 470, 210);
-		SDL_RenderDrawLine(ren, 170, 350, 470, 350);
-		SDL_RenderDrawLine(ren, 170, 550, 470, 550);
-		SDL_RenderPresent(ren);
-		SDL_Delay(1000 / 60);
-	}
 	SDL_DestroyTexture(newgame);
 	SDL_DestroyTexture(resume);
 	SDL_DestroyTexture(quit);
@@ -128,6 +190,14 @@ GAME_STATE startmenu(int *players_number, int *computer_players_number) {
 		SDL_FreeSurface(sur);
 		char numbers[20][3];
 		int i, i1 = 1, i2 = 1, i3 = 5, i4 = 5, x, y;
+		if(*players_number != -1)
+			i1 = *players_number;
+		if(*computer_players_number != -1)	
+			i2 = *computer_players_number;
+		if(rows != -1)	
+			i3 = rows;
+		if(columns != -1)	
+			i4 = columns;
 		for(i = 0; i < 10; i++) {
 			numbers[i][0] = '0' + i;
 			numbers[i][1] = '\0';
@@ -158,35 +228,43 @@ GAME_STATE startmenu(int *players_number, int *computer_players_number) {
 						y = e.button.y;
 						if(x > R21.x && x < R21.x + R21.w && y > R21.y && y < R21.y + R21.h) {
 							if(i1 != 0)
-								i1--;
+								if(*players_number == -1)
+									i1--;
 						}		
 						else if(x > R23.x && x < R23.x + R23.w && y > R23.y && y < R23.y + R23.h) {
 							if(i1 != 19)
-								i1++;
+								if(*players_number == -1)
+									i1++;
 						}		
 						else if(x > R31.x && x < R31.x + R31.w && y > R31.y && y < R31.y + R31.h) {
 							if(i2 != 0)
-								i2--;
+								if(*computer_players_number == -1)
+									i2--;
 						}		
 						else if(x > R33.x && x < R33.x + R33.w && y > R33.y && y < R33.y + R33.h) {
 							if(i2 != 19)
-								i2++;
+								if(*computer_players_number == -1)
+									i2++;
 						}		
 						else if(x > R41.x && x < R41.x + R41.w && y > R41.y && y < R41.y + R41.h) {
 							if(i3 != 4)
-								i3--;
+								if(rows == -1)
+									i3--;
 						}		
 						else if(x > R43.x && x < R43.x + R43.w && y > R43.y && y < R43.y + R43.h) {
 							if(i3 != 19)
-								i3++;
+								if(rows == -1)
+									i3++;
 						}		
 						else if(x > R51.x && x < R51.x + R51.w && y > R51.y && y < R51.y + R51.h) {
 							if(i4 != 4)
-								i4--;
+								if(columns == -1)
+									i4--;
 						}		
 						else if(x > R53.x && x < R53.x + R53.w && y > R53.y && y < R53.y + R53.h) {
 							if(i4 != 19)
-								i4++;		
+								if(columns == -1)
+									i4++;		
 						}
 						else if(x > R15.x && x < R15.x + R15.w && y > R15.y && y < R15.y + R15.h) {
 							if(i1 + i2 >= 2)
@@ -327,6 +405,7 @@ GAME_STATE startmenu(int *players_number, int *computer_players_number) {
 
 /* Actual game interface */
 GAME_STATE START_THE_GAME(board *b, player **pl, int players_number, int computer_players_number, player **current) {
+	TTF_Initialize_All();
 	const int WINDOW_WIDTH = columns * CELL_SIDE;
 	const int WINDOW_HEIGHT = rows * CELL_SIDE + CELL_SIDE * 2;
 	SDL_Window *window;
