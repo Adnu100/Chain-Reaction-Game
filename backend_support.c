@@ -282,6 +282,14 @@ void SaveGame(board b, player *pl, player *current, int players_number, int comp
 	write(fd, &players_number, sizeof(int));	
 	write(fd, &computer_players_number, sizeof(int));
 	write(fd, "\n", sizeof(char));
+	if(ColorRow == NULL) {
+		ColorRow = (SDL_Color *)malloc(sizeof(SDL_Color) * (players_number + computer_players_number));
+		for(i = 0; i < players_number + computer_players_number; i++) {
+			ColorRow[i].r = pl[i].r;
+			ColorRow[i].g = pl[i].g;
+			ColorRow[i].b = pl[i].b;
+		}
+	}		
 	for(i = 0; i < players_number + computer_players_number; i++)
 		write(fd, &(ColorRow[i]), sizeof(SDL_Color));
 	write(fd, "\n", sizeof(char));	
