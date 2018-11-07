@@ -28,6 +28,7 @@ void SetMove(board b, player *current, int *i, int *j) {
 		case HUMAN : 
 			break;
 		case BOT_EASIEST_MODE :
+			/* computer player will always try to lose. */
 			do {
 				*i = Random(0, rows - 1);
 				*j = Random(0, columns - 1);
@@ -48,12 +49,14 @@ void SetMove(board b, player *current, int *i, int *j) {
 			} while(FLAG_ON);
 			break;
 		case BOT_EASY : 
+			/* computer player will randomly select any of empty ot same player's cell */ 
 			do {
 				*i = Random(0, rows -1);
 				*j = Random(0, columns - 1);
 			} while(b[*i][*j].p != NULL && b[*i][*j].p->number != current->number);
 			break;
 		case BOT_MEDIUM : 
+			/* computer player will try to increase its territory as well as expand */
 			do {
 				*i = Random(0, rows - 1);
 				*j = Random(0, columns - 1);
@@ -80,6 +83,7 @@ void SetMove(board b, player *current, int *i, int *j) {
 			} while(FLAG_ON);
 			break;
 		case BOT_HARD :
+			/* computer will check each cell for maximum effect and will play on the most advantageous 				 * cell */
 			for(x = 0; x < rows; x++) {
 				for(y = 0; y < columns; y++) {
 					impact = 0;

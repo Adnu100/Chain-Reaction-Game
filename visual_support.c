@@ -5,6 +5,9 @@
 
 extern int rows, columns;
 
+/* All the functions to show content on window are written here */
+
+/* create a board of set rows and columns */
 void AD_CreateBoard(SDL_Renderer **ren, int r, int g, int b, int a) {
 	int i;
 	SDL_SetRenderDrawColor(*ren, r, g, b, a);
@@ -14,6 +17,7 @@ void AD_CreateBoard(SDL_Renderer **ren, int r, int g, int b, int a) {
 		SDL_RenderDrawLine(*ren, 0, i * CELL_SIDE, columns * CELL_SIDE, i * CELL_SIDE);	
 }	
 
+/* check board information and draw accordingly the balls in each cells of respective player */
 void UpdateBoardStatus(SDL_Renderer **ren, board b) {
 	int i, j;
 	for(i = 0; i < rows; i++) {
@@ -41,6 +45,7 @@ void UpdateBoardStatus(SDL_Renderer **ren, board b) {
 	return;				
 }
 
+/* a function to draw circle of radius "radius" at given coordinates and with provided r, g, b, a values */
 void AD_DrawCircle(SDL_Renderer **ren, float center_x_coordinate, float center_y_coordinate, float radius, int r, int g, int b, int a) {
 	SDL_SetRenderDrawColor(*ren, r, g, b, a);
 	int x;

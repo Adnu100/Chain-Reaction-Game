@@ -445,6 +445,20 @@ GAME_STATE START_THE_GAME(board *b, player **pl, int players_number, int compute
 					gamestat = OVER;
 					break;
 				case SDL_MOUSEBUTTONDOWN :
+					i = e.button.x;
+					j = e.button.y;
+					if(i > Rect1.x && i < Rect1.x + Rect1.w && j > Rect1.y && j < Rect1.y + Rect1.h) {
+						SDL_DestroyRenderer(ren);
+						SDL_DestroyWindow(window);
+						TTF_CloseFont(SansSherifFont);
+						TTF_Quit();
+						return SAVE;
+					}
+					if(i > Rect2.x && i < Rect2.x + Rect2.w && j > Rect2.y && j < Rect2.y + Rect2.h) {
+						SDL_DestroyRenderer(ren);
+						SDL_DestroyWindow(window);
+						return NEW_GAME;
+					}	
 					if((*current)->next == (*current)) {
 						gamestat = OVER;
 						break;
@@ -461,20 +475,6 @@ GAME_STATE START_THE_GAME(board *b, player **pl, int players_number, int compute
 						}
 						break;
 					}
-					i = e.button.x;
-					j = e.button.y;
-					if(i > Rect1.x && i < Rect1.x + Rect1.w && j > Rect1.y && j < Rect1.y + Rect1.h) {
-						SDL_DestroyRenderer(ren);
-						SDL_DestroyWindow(window);
-						TTF_CloseFont(SansSherifFont);
-						TTF_Quit();
-						return SAVE;
-					}
-					if(i > Rect2.x && i < Rect2.x + Rect2.w && j > Rect2.y && j < Rect2.y + Rect2.h) {
-						SDL_DestroyRenderer(ren);
-						SDL_DestroyWindow(window);
-						return NEW_GAME;
-					}	
 					break;
 				default :
 					break;

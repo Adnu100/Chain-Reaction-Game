@@ -7,6 +7,7 @@ extern int rows, columns, center;
 extern SDL_Rect Rect1, Rect2;
 extern SDL_Texture *savegame, *create_new_game;
 
+/* Animate all the cells in bucket */
 void AD_AnimateScreen(SDL_Renderer **ren, board b, player *current, bucket *buc) {
 	int pos, i, j, k;
 	buffer B;

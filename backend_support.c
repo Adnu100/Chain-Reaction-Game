@@ -11,6 +11,9 @@ extern int rows, columns;
 extern SDL_Color *ColorRow;
 extern player_type difficulty;
 
+/* All the backend functions like handling player deleting, advancing the board, game saving and resuming etc are written here */
+
+/* function to initialize a board and set it to point to a malloc 2d grid of cell */
 board Initiate_My_Board(void) {
 	int i, j;
 	board b = (struct cell **)malloc(sizeof(struct cell *) * rows);
@@ -42,6 +45,7 @@ board Initiate_My_Board(void) {
 	return b;
 }	
 
+/* creates a player row containing human and computer players */
 player *Create_Player_Row(int players_number, int computer_players_number) {
 	int i;
 	player *pl = (player *)malloc(sizeof(player) * (players_number + computer_players_number));
@@ -75,6 +79,7 @@ player *Create_Player_Row(int players_number, int computer_players_number) {
 	return pl;
 }
 
+/* advance a board and keep advancing it until it becomes stable */
 void advance(board b, int i, int j, player *current, SDL_Renderer **ren) {
 	int x, y, flag = FLAG_OFF, flag2 = FLAG_OFF, flag3 = FLAG_ON;
 	int Game_terminator = FLAG_OFF;
@@ -167,6 +172,7 @@ void advance(board b, int i, int j, player *current, SDL_Renderer **ren) {
 	}	
 }		
 
+/* Will be called after each move. checks if players are out and deletes them if out. Does not erase any knocked out player as this information can be displayed after the game is over */
 void Delete_Out_Players(board b, player **grid, player **current_player_address) {	
 	player *temp, *temp2, *temp3;
 	temp = temp2 = *grid;
@@ -195,6 +201,7 @@ void Delete_Out_Players(board b, player **grid, player **current_player_address)
 	} while(!(flag));
 }	
 
+/* function which retrieves game information from a file and stores it in respective variables */
 STAT ResumeGame(board *b, player **pl, player **playerstore, player **current, int *players_number, int *computer_players_number, char *filename) {
 	int fd;
 	int flag = FLAG_OFF;
@@ -261,6 +268,7 @@ STAT ResumeGame(board *b, player **pl, player **playerstore, player **current, i
 	return PLAYING;
 }
 
+/* a function to save game information to a file */
 void SaveGame(board b, player *pl, player *current, int players_number, int computer_players_number, char *filename) {
 	int fd;
 	int flag = FLAG_OFF;
@@ -336,10 +344,12 @@ void SaveGame(board b, player *pl, player *current, int players_number, int comp
 	close(fd);	
 }
 
+/* destroy the player row */
 void DestroyPlayer(player **pl_add) {
 	free(*pl_add);
 }
 
+/* destroy the malloced cells */
 void DestroyBoard(board *b) {
 	int i;
 	for(i = 0; i < rows; i++)
@@ -347,6 +357,7 @@ void DestroyBoard(board *b) {
 	free(*b);
 }		
 
+/* Display help on terminal */
 void Display_help(void) {
 	int fd;
 	char b;

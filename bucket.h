@@ -17,8 +17,8 @@ typedef node *bucket;
  */ 
 
 /* Functions which will be needed */
-void binit(bucket *b);
-void addCell(bucket *b, buffer B);
-int storage(bucket *b);
-buffer check(bucket *b, int i);
-void destroyBucket(bucket *b);
+void binit(bucket *b);			//initializes bucket
+void addCell(bucket *b, buffer B);	//adds a cell to bucket
+int storage(bucket *b);			//Tells the number of elements in the bucket
+buffer check(bucket *b, int i);		//returns the ith element 
+void destroyBucket(bucket *b);		//Destroy the bucket
