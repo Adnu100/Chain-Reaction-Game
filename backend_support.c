@@ -57,9 +57,13 @@ player *Create_Player_Row(int players_number, int computer_players_number) {
 		pl[i].number = i + 1;
 		if(ColorRow == NULL) {
 			pl[i].r = Random(0, 255);
+			Random(0, 255); //this resets the seed again so that more randomization takes place
 			pl[i].g = Random(0, 255);
+			Random(0, 255);	//this resets the seed again so that more randomization takes place
 			pl[i].b = Random(0, 255);
-			pl[i].a = 0;
+			Random(0, 255);	//this resets the seed again so that more randomization takes place
+			pl[i].a = 0;	
+			Random(0, 255);	//this resets the seed again so that more randomization takes place
 		}
 		else {	
 			pl[i].r = ColorRow[i].r;
@@ -176,13 +180,13 @@ void advance(board b, int i, int j, player *current, SDL_Renderer **ren) {
 void Delete_Out_Players(board b, player **grid, player **current_player_address) {	
 	player *temp, *temp2, *temp3;
 	temp = temp2 = *grid;
-	int i, j, count, flag = 0;
+	int i, j, count, flag = FLAG_OFF;
 	while(temp2->next != *grid)
 		temp2 = temp2->next;
 	temp3 = temp2;	
 	do {
 		if(temp == temp3)
-			flag++;
+			flag = FLAG_ON;
 		for(i = 0, count = 0; (i < rows) && (count == 0); i++)
 			for(j = 0; j < columns; j++)
 				if(b[i][j].p == temp) {
