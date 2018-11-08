@@ -30,7 +30,7 @@ struct cell {
 typedef struct cell **board;	
 
 /* game initializer function */
-GAME_STATE START_THE_GAME(board *ADD_b, player **ADD_pl, int players_number, int computer_players_number, player **current);
+GAME_STATE START_THE_GAME(board *ADD_b, player **ADD_pl, int players_number, int computer_players_number, player **current, int *moves);
 GAME_STATE startmenu(int *players_number, int *computer_players_number);
 
 /* function declarations */
@@ -46,11 +46,8 @@ void AD_DrawCircle(SDL_Renderer **ren, float x, float y, float radius, int r, in
 void AD_AnimateScreen(SDL_Renderer **ren, board b, player *current, bucket *buc);
 void SetMove(board b, player *current, int *i, int *j);
 int Random(int Range_Start, int Range_End);
-void SaveGame(board b, player *pl, player *current, int players_number, int computer_players_number, char *filename);
-STAT ResumeGame(board *b, player **pl, player **playerstore, player **current, int *players_number, int *computer_players_number, char *filename);
+void SaveGame(board b, player *pl, player *current, int players_number, int computer_players_number, char *filename, int moves);
+STAT ResumeGame(board *b, player **pl, player **playerstore, player **current, int *players_number, int *computer_players_number, char *filename, int *moves);
 void TTF_Initialize_All(void);
 void Display_help(void);
 
-/*unuseful functions used for checking neat gameplay and bug fixes */
-void printboard(board b);
-void printplayer(player **p);

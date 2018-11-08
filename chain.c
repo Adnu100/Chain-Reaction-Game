@@ -6,7 +6,7 @@
 #include "chain.h"
 
 /* Number of rows and columns will be required at each and every step of game and for each function of the program, so declaring them as Global variables */
-int rows = -1, columns = -1;
+int rows = -1, columns = -1, speed = 3;
 SDL_Color *ColorRow = NULL;
 player_type difficulty = BOT_MEDIUM;
 
@@ -15,9 +15,9 @@ int main(int argc, char *argv[]) {
 	 */
 	board b = NULL;
 	player *pl, *pl2, *current;
-	int players_number = -1, computer_players_number = -1;
+	int players_number = -1, computer_players_number = -1, moves = 0;
 	char *savefile = NULL, *resumefile = NULL;
-	int QUICK_START_FLAG = FLAG_OFF, SOUND_FLAG = FLAG_ON, RES_FLAG = FLAG_OFF;
+	int QUICK_START_FLAG = FLAG_OFF, RES_FLAG = FLAG_OFF;
 	
 	/* process the command line options first */
 	int opt, opt_index;
@@ -25,13 +25,32 @@ int main(int argc, char *argv[]) {
 		{"quick-start", no_argument, NULL, 'q'}, 
 		{"help", no_argument, NULL, 'h'}, 
 		{"save", required_argument, NULL, 's'}, 
-		{"sound-off", no_argument, NULL, 'O'}, 
 		{"resume-default", no_argument, NULL, 'L'},
+		{"slow", no_argument, NULL, '1'},
+		{"medium", no_argument, NULL, '2'},
+		{"fast", no_argument, NULL, '3'},
+		{"super-fast", no_argument, NULL, '4'},
+		{"no-animations", no_argument, NULL, 'N'},
 		{"resume", required_argument, NULL, 'R'},
 		{NULL, 0, NULL, 0}
 	};
-	while((opt = getopt_long(argc, argv, "r:c:qhH:C:s:R:D:", optarr, &opt_index)) != -1) {
+	while((opt = getopt_long(argc, argv, "r:c:qhH:C:s:R:D:N", optarr, &opt_index)) != -1) {
 		switch(opt) {
+			case '1':
+				speed = 3;
+				break;
+			case '2':
+				speed = 4;
+				break;
+			case '3':
+				speed = 5;
+				break;		
+			case '4':
+				speed = 8;
+				break;	
+			case 'N':
+				speed = -1;
+				break;	
 			case 'h':
 				Display_help();
 				return 0;
@@ -65,7 +84,7 @@ int main(int argc, char *argv[]) {
 				strcpy(resumefile, optarg);		
 				QUICK_START_FLAG = FLAG_ON;
 				RES_FLAG = FLAG_ON;
-				if(ResumeGame(&b, &pl, &pl2, &current, &players_number, &computer_players_number, resumefile) == OVER)
+				if(ResumeGame(&b, &pl, &pl2, &current, &players_number, &computer_players_number, resumefile, &moves) == OVER)
 					return 0;
 				break;	
 			case 'H':	
@@ -93,13 +112,10 @@ int main(int argc, char *argv[]) {
 						break;				
 				}
 				break;
-			case 'O':
-				SOUND_FLAG = FLAG_OFF;
-				break;	
 			case 'L':
 				QUICK_START_FLAG = FLAG_ON;
 				RES_FLAG = FLAG_ON;
-				if(ResumeGame(&b, &pl, &pl2, &current, &players_number, &computer_players_number, resumefile) == OVER)
+				if(ResumeGame(&b, &pl, &pl2, &current, &players_number, &computer_players_number, resumefile, &moves) == OVER)
 					return 0;
 				break;	
 			case '?':
@@ -136,7 +152,7 @@ int main(int argc, char *argv[]) {
 				break;
 			case RESUME:
 				/* extract the game information from a file into the board and player row */
-				if(ResumeGame(&b, &pl, &pl2, &current, &players_number, &computer_players_number, resumefile) == OVER)
+				if(ResumeGame(&b, &pl, &pl2, &current, &players_number, &computer_players_number, resumefile, &moves) == OVER)
 					return 0;	
 				break;
 			default:
@@ -155,7 +171,7 @@ int main(int argc, char *argv[]) {
 	while(var == PLAYING) { 	
 		var = OVER;		
 		/* Call a function to start the game */
-		switch(START_THE_GAME(&b, &pl, players_number, computer_players_number, &current)) {
+		switch(START_THE_GAME(&b, &pl, players_number, computer_players_number, &current, &moves)) {
 			case NEW_GAME:	
 				/* "goto" can be used (goto the beggining again to restart a new game). 
 				 * But sir told goto is bad, so using while loop
@@ -170,11 +186,22 @@ int main(int argc, char *argv[]) {
 			 	break;
 			case SAVE:
 				/* save the game into a file */
-			 	SaveGame(b, pl2, current, players_number, computer_players_number, savefile);
+			 	SaveGame(b, pl2, current, players_number, computer_players_number, savefile, moves);
 			 	DestroyPlayer(&pl2);			 	
 			 	DestroyBoard(&b);
 			 	break;		
-			case QUIT: 
+			case QUIT:
+				/* print the game statistics before exiting (like a standard game) */ 
+				if(current->next == current) {
+					if(current->type == HUMAN)
+						printf("Game status:\n\tTotal Moves Played : %d\n\tTotal Players : %d (%d human, %d bots)\n\tPlayer %d won! Congrats!\n", moves, players_number + computer_players_number, players_number, computer_players_number, current->number);
+					else if(players_number != 0)
+						printf("Game status:\n\tTotal Moves Played : %d\n\tTotal Players : %d (%d human, %d bots)\n\tPlayer %d won (computer player)\n Better Luck next time!\n", moves, players_number + computer_players_number, players_number, computer_players_number, current->number);	
+					else
+						printf("Game status:\n\tTotal Moves Played : %d\n\tTotal Players : %d (%d human, %d bots)\n\tPlayer %d won!\n", moves, players_number + computer_players_number, players_number, computer_players_number, current->number);	
+				}
+				else 
+					printf("Game quit\n");		
 				/* board and player row memory is dynamically alloted. */
 				/* So before ending the game program, that memory is needed to free */  
 				/* Free the malloced Resources */

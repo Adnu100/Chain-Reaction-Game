@@ -7,7 +7,7 @@
 #include <SDL2/SDL.h>
 #include "chain.h"
 
-extern int rows, columns;
+extern int rows, columns, speed;
 extern SDL_Color *ColorRow;
 extern player_type difficulty;
 
@@ -47,23 +47,41 @@ board Initiate_My_Board(void) {
 
 /* creates a player row containing human and computer players */
 player *Create_Player_Row(int players_number, int computer_players_number) {
-	int i;
+	int i, j = Random(0, 6);
 	player *pl = (player *)malloc(sizeof(player) * (players_number + computer_players_number));
 	if(pl == NULL) {
 		printf("Not Enough Ram!!!\n");
 			exit(6);
 	}
+	SDL_Color Colors[7] = {
+		{255, 0, 0},
+		{0, 255, 0},
+		{0, 0, 255}, 
+		{255, 0, 255},
+		{255, 255, 0},
+		{0, 255, 255},
+		{255, 255, 255}
+	};
+	int visited[7] = {0, 0, 0, 0, 0, 0, 0};
 	for(i = 0; i < (players_number + computer_players_number); i++) {
 		pl[i].number = i + 1;
 		if(ColorRow == NULL) {
-			pl[i].r = Random(0, 255);
-			Random(0, 255); //this resets the seed again so that more randomization takes place
-			pl[i].g = Random(0, 255);
-			Random(0, 255);	//this resets the seed again so that more randomization takes place
-			pl[i].b = Random(0, 255);
-			Random(0, 255);	//this resets the seed again so that more randomization takes place
-			pl[i].a = 0;	
-			Random(0, 255);	//this resets the seed again so that more randomization takes place
+			/* first 6 players are given selected colors and further players are given random colors */
+			if(i > 6) {
+				pl[i].r = Random(0, 255);
+				pl[i].g = Random(0, 255);
+				pl[i].b = Random(0, 255);
+				pl[i].a = 0;	
+			}
+			else {
+				while(visited[j] != 0)
+					j = Random(0, 6);
+				visited[j] = 1;	
+				pl[i].r = Colors[j].r;
+				pl[i].g = Colors[j].g;
+				pl[i].b = Colors[j].b;
+				pl[i].a = 0;
+			}	
 		}
 		else {	
 			pl[i].r = ColorRow[i].r;
@@ -173,7 +191,9 @@ void advance(board b, int i, int j, player *current, SDL_Renderer **ren) {
 			destroyBucket(&buc);
 			destroyBucket(&CTA);
 		}	
-	}	
+	}
+	if(speed < 0)
+		SDL_Delay(300);	
 }		
 
 /* Will be called after each move. checks if players are out and deletes them if out. Does not erase any knocked out player as this information can be displayed after the game is over */
@@ -206,7 +226,7 @@ void Delete_Out_Players(board b, player **grid, player **current_player_address)
 }	
 
 /* function which retrieves game information from a file and stores it in respective variables */
-STAT ResumeGame(board *b, player **pl, player **playerstore, player **current, int *players_number, int *computer_players_number, char *filename) {
+STAT ResumeGame(board *b, player **pl, player **playerstore, player **current, int *players_number, int *computer_players_number, char *filename, int *moves) {
 	int fd;
 	int flag = FLAG_OFF;
 	if(filename == NULL) {
@@ -217,12 +237,15 @@ STAT ResumeGame(board *b, player **pl, player **playerstore, player **current, i
 	fd = open(filename, O_RDONLY);
 	if(flag == FLAG_ON)
 		free(filename);
-	if(fd == -1) 
+	if(fd == -1) {
+		printf("Could not find the saved game file\n");
 		return OVER;
+	}	
 	read(fd, &rows, sizeof(int));
 	read(fd, &columns, sizeof(int));
 	read(fd, players_number, sizeof(int));
 	read(fd, computer_players_number, sizeof(int));
+	read(fd, moves, sizeof(int));
 	lseek(fd, 1, SEEK_CUR);
 	int i, j;
 	ColorRow = (SDL_Color *)malloc(sizeof(SDL_Color) * (*players_number + *computer_players_number));
@@ -238,17 +261,18 @@ STAT ResumeGame(board *b, player **pl, player **playerstore, player **current, i
 		read(fd, &((*pl)[i].number), sizeof(int));
 		read(fd, type, sizeof(char) * 3);
 		type[3] = '\0';
-		if(strcmp(type, "HPL") == 0)
-			(*pl)[i].type = HUMAN;
-		else if(strcmp(type, "EST") == 0)
+		if(strcmp(type, "HPL") == 0) 
+			(*pl)[i].type = HUMAN;	
+		else if(strcmp(type, "EST") == 0) 
 			(*pl)[i].type = BOT_EASIEST_MODE;
 		else if(strcmp(type, "ESY") == 0)
 			(*pl)[i].type = BOT_EASY;		
 		else if(strcmp(type, "MED") == 0)
 			(*pl)[i].type = BOT_MEDIUM;	
-		else if(strcmp(type, "HRD") == 0)
-			(*pl)[i].type = BOT_HARD;		
-		read(fd, &((*pl)[i].r), sizeof(int));		read(fd, &((*pl)[i].g), sizeof(int));
+		else if(strcmp(type, "HRD") == 0) 
+			(*pl)[i].type = BOT_HARD;
+		read(fd, &((*pl)[i].r), sizeof(int));		
+		read(fd, &((*pl)[i].g), sizeof(int));
 		read(fd, &((*pl)[i].b), sizeof(int));
 		read(fd, &((*pl)[i].a), sizeof(int));
 		read(fd, &connection, sizeof(int));
@@ -273,7 +297,7 @@ STAT ResumeGame(board *b, player **pl, player **playerstore, player **current, i
 }
 
 /* a function to save game information to a file */
-void SaveGame(board b, player *pl, player *current, int players_number, int computer_players_number, char *filename) {
+void SaveGame(board b, player *pl, player *current, int players_number, int computer_players_number, char *filename, int moves) {
 	int fd;
 	int flag = FLAG_OFF;
 	if(filename == NULL) {
@@ -282,8 +306,6 @@ void SaveGame(board b, player *pl, player *current, int players_number, int comp
 		flag = FLAG_ON;
 	}	
 	fd = open(filename, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
-	if(flag == FLAG_ON)
-		free(filename);	
 	if(fd == -1) {
 		printf("Overwrite not done\n");
 		return;
@@ -293,6 +315,7 @@ void SaveGame(board b, player *pl, player *current, int players_number, int comp
 	write(fd, &columns, sizeof(int));
 	write(fd, &players_number, sizeof(int));	
 	write(fd, &computer_players_number, sizeof(int));
+	write(fd, &moves, sizeof(int));
 	write(fd, "\n", sizeof(char));
 	if(ColorRow == NULL) {
 		ColorRow = (SDL_Color *)malloc(sizeof(SDL_Color) * (players_number + computer_players_number));
@@ -346,6 +369,9 @@ void SaveGame(board b, player *pl, player *current, int players_number, int comp
 	write(fd, &(current->number), sizeof(int));	
 	write(fd, "\n", sizeof(char));	
 	close(fd);	
+	printf("Game saved successfully in file %s\n", filename);
+	if(flag == FLAG_ON)
+		free(filename);	
 }
 
 /* destroy the player row */
