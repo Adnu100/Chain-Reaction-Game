@@ -6,7 +6,7 @@
 #include "chain.h"
 
 /* Number of rows and columns will be required at each and every step of game and for each function of the program, so declaring them as Global variables */
-int rows = -1, columns = -1, speed = 3;
+int rows = -1, columns = -1, speed = 4;
 SDL_Color *ColorRow = NULL;
 player_type difficulty = BOT_MEDIUM;
 
@@ -196,7 +196,7 @@ int main(int argc, char *argv[]) {
 					if(current->type == HUMAN)
 						printf("Game status:\n\tTotal Moves Played : %d\n\tTotal Players : %d (%d human, %d bots)\n\tPlayer %d won! Congrats!\n", moves, players_number + computer_players_number, players_number, computer_players_number, current->number);
 					else if(players_number != 0)
-						printf("Game status:\n\tTotal Moves Played : %d\n\tTotal Players : %d (%d human, %d bots)\n\tPlayer %d won (computer player)\n Better Luck next time!\n", moves, players_number + computer_players_number, players_number, computer_players_number, current->number);	
+						printf("Game status:\n\tTotal Moves Played : %d\n\tTotal Players : %d (%d human, %d bots)\n\tPlayer %d won (computer player)\nBetter Luck next time!\n", moves, players_number + computer_players_number, players_number, computer_players_number, current->number);	
 					else
 						printf("Game status:\n\tTotal Moves Played : %d\n\tTotal Players : %d (%d human, %d bots)\n\tPlayer %d won!\n", moves, players_number + computer_players_number, players_number, computer_players_number, current->number);	
 				}
