@@ -56,12 +56,14 @@ int main(int argc, char *argv[]) {
 				return 0;
 				break;
 			case 'r':
-				if(atoi(optarg) >= 4)
-					rows = atoi(optarg);
+				if(!RES_FLAG) 
+					if(atoi(optarg) >= 4)
+						rows = atoi(optarg);
 				break;
 			case 'c':
-				if(atoi(optarg) >= 4)
-					columns = atoi(optarg);
+				if(!RES_FLAG)
+					if(atoi(optarg) >= 4)
+						columns = atoi(optarg);
 				break;
 			case 'q':
 				QUICK_START_FLAG = FLAG_ON;
@@ -80,43 +82,52 @@ int main(int argc, char *argv[]) {
 				strcat(savefile, ".chain");
 				break;
 			case 'R':
-				resumefile = (char *)malloc(sizeof(char) * strlen(optarg) + 1);
-				strcpy(resumefile, optarg);		
-				QUICK_START_FLAG = FLAG_ON;
-				RES_FLAG = FLAG_ON;
-				if(ResumeGame(&b, &pl, &pl2, &current, &players_number, &computer_players_number, resumefile, &moves) == OVER)
-					return 0;
+				if(!RES_FLAG) {
+					resumefile = (char *)malloc(sizeof(char) * strlen(optarg) + 1);
+					strcpy(resumefile, optarg);		
+					QUICK_START_FLAG = FLAG_ON;
+					RES_FLAG = FLAG_ON;
+					if(ResumeGame(&b, &pl, &pl2, &current, &players_number, &computer_players_number, resumefile, &moves) == OVER)
+						return 0;
+				}	
 				break;	
 			case 'H':	
-				if(atoi(optarg) >= 0)
-					players_number = atoi(optarg);
+				if(!RES_FLAG) 
+					if(atoi(optarg) >= 0)
+						players_number = atoi(optarg);
 				break;
 			case 'C':
-				if(atoi(optarg) >= 0)
-					computer_players_number = atoi(optarg);
+				if(!RES_FLAG) 
+					if(atoi(optarg) >= 0)
+						computer_players_number = atoi(optarg);
 				break;
 			case 'D':
-				opt = atoi(optarg);
-				switch(opt) {
-					case 1:
-						difficulty = BOT_EASIEST_MODE;
-						break;
-					case 2:
-						difficulty = BOT_EASY;
-						break;
-					case 3:
-						difficulty = BOT_MEDIUM;
-						break;
-					default:
-						difficulty = BOT_HARD;
-						break;				
-				}
+				if(!RES_FLAG) {
+					opt = atoi(optarg); {
+					switch(opt) {
+						case 1:
+							difficulty = BOT_EASIEST_MODE;
+							break;
+						case 2:
+							difficulty = BOT_EASY;
+							break;
+						case 3:
+							difficulty = BOT_MEDIUM;
+							break;
+						default:
+							difficulty = BOT_HARD;
+							break;				
+						}
+					}	
+				}	
 				break;
 			case 'L':
-				QUICK_START_FLAG = FLAG_ON;
-				RES_FLAG = FLAG_ON;
-				if(ResumeGame(&b, &pl, &pl2, &current, &players_number, &computer_players_number, resumefile, &moves) == OVER)
-					return 0;
+				if(!RES_FLAG) {
+					QUICK_START_FLAG = FLAG_ON;
+					RES_FLAG = FLAG_ON;
+					if(ResumeGame(&b, &pl, &pl2, &current, &players_number, &computer_players_number, resumefile, &moves) == OVER)
+						return 0;
+				}		
 				break;	
 			case '?':
 				printf("Type %s --help | %s -h for help\n", argv[0], argv[0]);

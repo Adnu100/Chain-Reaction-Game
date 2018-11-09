@@ -28,7 +28,7 @@ Mandatory arguments to long options are mandatory for short options too
   --medium		game with medium animations (default)
   --fast		game with fast animations 
   --super-fast		animation speed is increased to very fast
-  --no-animations	game with no animations			
+  -N --no-animations	game with no animations			
   -h --help		display help and exit
   
 Exit Status:
