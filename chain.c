@@ -131,7 +131,7 @@ int main(int argc, char *argv[]) {
 				break;	
 			case '?':
 				printf("Type %s --help | %s -h for help\n", argv[0], argv[0]);
-				exit(EXIT_FAILURE);
+				exit(7);
 				break;							
 		}
 	}

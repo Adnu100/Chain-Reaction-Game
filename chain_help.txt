@@ -39,5 +39,5 @@ Exit Status:
  4 if TTF initialization fails,
  5 if font (.ttf) file is missing (or unable to open),
  6 if not enough required RAM for game in device
- EXIT_FAILURE if invalid options are provided in command line
+ 7 if invalid options are provided in command line
  
