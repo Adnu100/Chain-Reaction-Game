@@ -3,7 +3,7 @@
 #include <math.h>
 #include "chain.h"
 
-extern int rows, columns;
+extern int rows, columns, speed;
 
 /* All the functions to show content on window are written here */
 
@@ -20,10 +20,10 @@ void AD_CreateBoard(SDL_Renderer **ren, int r, int g, int b, int a) {
 /* check board information and draw accordingly the balls in each cells of respective player */
 void UpdateBoardStatus(SDL_Renderer **ren, board b) {
 	int i, j, Vstate;
-	static short int vibration = 0, direction = 2;
+	static short int vibration = 0, direction = 1;
 	for(i = 0; i < rows; i++) {
 		for(j = 0; j < columns; j++) {
-			if(b[i][j].balls == b[i][j].capacity)
+			if(b[i][j].balls == b[i][j].capacity && speed != -1)
 				Vstate = vibration;
 			else
 				Vstate = 0;	
@@ -34,13 +34,13 @@ void UpdateBoardStatus(SDL_Renderer **ren, board b) {
 					AD_DrawCircle(ren, CELL_SIDE * (j + 0.5) + Vstate, CELL_SIDE * (i + 0.5) + Vstate, CELL_SIDE * (28.0 / 80.0), (b[i][j].p)->r, (b[i][j].p)->g, (b[i][j].p)->b, (b[i][j].p)->a);
 					break;
 				case 2:
-					AD_DrawCircle(ren, CELL_SIDE * (j + 0.5) - CELL_SIDE * (12.0 / 80.0) + Vstate, CELL_SIDE * (i + 0.5) - CELL_SIDE * (12.0 / 80.0), CELL_SIDE * (21.0 / 80.0) + Vstate, (b[i][j].p)->r, (b[i][j].p)->g, (b[i][j].p)->b, (b[i][j].p)->a);
-					AD_DrawCircle(ren, CELL_SIDE * (j + 0.5) + CELL_SIDE * (12.0 / 80.0) - Vstate, CELL_SIDE * (i + 0.5) + CELL_SIDE * (12.0 / 80.0), CELL_SIDE * (21.0 / 80.0) + Vstate, (b[i][j].p)->r, (b[i][j].p)->g, (b[i][j].p)->b, (b[i][j].p)->a);
+					AD_DrawCircle(ren, CELL_SIDE * (j + 0.5) - CELL_SIDE * (12.0 / 80.0) + Vstate, CELL_SIDE * (i + 0.5) - CELL_SIDE * (12.0 / 80.0), CELL_SIDE * (21.0 / 80.0) + Vstate + CELL_SIDE / 15, (b[i][j].p)->r, (b[i][j].p)->g, (b[i][j].p)->b, (b[i][j].p)->a);
+					AD_DrawCircle(ren, CELL_SIDE * (j + 0.5) + CELL_SIDE * (12.0 / 80.0) - Vstate, CELL_SIDE * (i + 0.5) + CELL_SIDE * (12.0 / 80.0), CELL_SIDE * (21.0 / 80.0) + Vstate + CELL_SIDE / 15, (b[i][j].p)->r, (b[i][j].p)->g, (b[i][j].p)->b, (b[i][j].p)->a);
 					break;
 				case 3:
 				 	AD_DrawCircle(ren, CELL_SIDE * (j + 0.5) - CELL_SIDE * (15.0 / 80.0) - Vstate, CELL_SIDE * (i + 0.5) - CELL_SIDE * (15.0 / 80.0), CELL_SIDE * (25.0 / 80.0), (b[i][j].p)->r, (b[i][j].p)->g, (b[i][j].p)->b, (b[i][j].p)->a);
 					AD_DrawCircle(ren, CELL_SIDE * (j + 0.5) + CELL_SIDE * (15.0 / 80.0) + Vstate, CELL_SIDE * (i + 0.5) - CELL_SIDE * (15.0 / 80.0), CELL_SIDE * (25.0 / 80.0), (b[i][j].p)->r, (b[i][j].p)->g, (b[i][j].p)->b, (b[i][j].p)->a);
-					AD_DrawCircle(ren, CELL_SIDE * (j + 0.5) + Vstate, CELL_SIDE * (i + 0.5) + CELL_SIDE * (15.0 / 80.0), CELL_SIDE * (25.0 / 80.0), (b[i][j].p)->r, (b[i][j].p)->g, (b[i][j].p)->b, (b[i][j].p)->a);
+					AD_DrawCircle(ren, CELL_SIDE * (j + 0.5), CELL_SIDE * (i + 0.5) + CELL_SIDE * (15.0 / 80.0) + Vstate, CELL_SIDE * (25.0 / 80.0), (b[i][j].p)->r, (b[i][j].p)->g, (b[i][j].p)->b, (b[i][j].p)->a);
 					break;				 	
 				default:
 					break;	
