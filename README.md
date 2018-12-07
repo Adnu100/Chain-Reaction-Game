@@ -1,7 +1,5 @@
 # Chain Reaction Game
-
-Name - Adnesh Anil Dhamangaonkar
-MIS Id- 111703015
+By - Adnesh Anil Dhamangaonkar
 
 A chain reaction game which can be played by n human players or computer players. M * M board.
 Game can be saved and resumed. Game is stored in a file.
