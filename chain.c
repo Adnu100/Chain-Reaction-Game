@@ -185,7 +185,7 @@ int main(int argc, char *argv[]) {
 		switch(START_THE_GAME(&b, &pl, players_number, computer_players_number, &current, &moves)) {
 			case NEW_GAME:	
 				/* "goto" can be used (goto the beggining again to restart a new game). 
-				 * But sir told goto is bad, so using while loop
+				 * Goto leads to bad and unreadable code, so using while loop
 				 */
 				var = PLAYING;
 				DestroyPlayer(&pl2);
