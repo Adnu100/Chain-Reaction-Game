@@ -5,24 +5,35 @@
 #include <time.h>
 
 extern int rows, columns;
+int **impact_table;
+struct MOVE {
+	int bx;
+	int by;
+} *BEST_MOVE;
 
 int Random(int Range_Start, int Range_End) {
 	srand((unsigned int)(time(NULL) + rand() + rand()));
 	return (rand() % (1 + (Range_End > Range_Start ? Range_End : Range_Start) - (Range_Start < Range_End ? Range_Start : Range_End)) + (Range_Start < Range_End ? Range_Start : Range_End));
 }	
 
+void ComputerPlayerMemoryMalloc(void) {
+	impact_table = (int **)malloc(sizeof(int *) * rows);
+	for(int x = 0; x < rows; x++)
+		impact_table[x] = (int *)malloc(sizeof(int) * columns);	
+	BEST_MOVE = (struct MOVE *)malloc(sizeof(struct MOVE) * rows * columns);		
+}
+
+void ComputerPlayerMemoryFree(void) {
+	for(int x = 0; x < rows; x++)
+		free(*(impact_table + x));
+	free(impact_table);
+	free(BEST_MOVE);
+}
+
 void SetMove(board b, player *current, int *i, int *j) {
 	*i = *j = 0;
 	int x, y, impact, highest_impact = 0;
-	int **impact_table = (int **)malloc(sizeof(int *) * rows);
-	for(x = 0; x < rows; x++)
-		impact_table[x] = (int *)malloc(sizeof(int) * columns);			
 	int tolerate = 0;
-	struct MOVE {
-		int bx;
-		int by;
-	};
-	struct MOVE *BEST_MOVE = (struct MOVE *)malloc(sizeof(struct MOVE) * rows * columns);	
 	int count = 0;
 	switch(current->type) {
 		case HUMAN : 
@@ -381,8 +392,4 @@ void SetMove(board b, player *current, int *i, int *j) {
 		default:
 			break;				
 	}	
-	for(x = 0; x < rows; x++)
-		free(*(impact_table + x));
-	free(impact_table);
-	free(BEST_MOVE);
 }

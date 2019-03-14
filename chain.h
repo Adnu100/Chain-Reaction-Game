@@ -44,6 +44,8 @@ void DestroyPlayer(player **pl_add);
 void DestroyBoard(board *b);
 void AD_DrawCircle(SDL_Renderer **ren, float x, float y, float radius, int r, int g, int b, int a);
 void AD_AnimateScreen(SDL_Renderer **ren, board b, player *current, bucket *buc);
+void ComputerPlayerMemoryMalloc(void);
+void ComputerPlayerMemoryFree(void);
 void SetMove(board b, player *current, int *i, int *j);
 int Random(int Range_Start, int Range_End);
 void SaveGame(board b, player *pl, player *current, int players_number, int computer_players_number, char *filename, int moves);

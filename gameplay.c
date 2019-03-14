@@ -406,6 +406,8 @@ GAME_STATE startmenu(int *players_number, int *computer_players_number) {
 /* Actual game interface */
 GAME_STATE START_THE_GAME(board *b, player **pl, int players_number, int computer_players_number, player **current, int *moves) {
 	TTF_Initialize_All();
+	if(computer_players_number > 0)
+		ComputerPlayerMemoryMalloc();
 	const int WINDOW_WIDTH = columns * CELL_SIDE;
 	const int WINDOW_HEIGHT = rows * CELL_SIDE + CELL_SIDE * 2;
 	SDL_Window *window;
@@ -511,6 +513,8 @@ GAME_STATE START_THE_GAME(board *b, player **pl, int players_number, int compute
 		SDL_Delay(1000 / 30);
 	}
 	*moves = Moves;
+	if(computer_players_number > 0)
+		ComputerPlayerMemoryFree();
 	SDL_DestroyRenderer(ren);
 	SDL_DestroyWindow(window);
 	TTF_CloseFont(SansSherifFont);
