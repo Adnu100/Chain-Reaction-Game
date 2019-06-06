@@ -46,6 +46,7 @@ GAME_STATE startmenu(int *players_number, int *computer_players_number) {
 		fprintf(stderr, "could not Create Renderer : %s\n", SDL_GetError());
 		exit(3);
 	}
+	int redraw = 1;
 	SDL_Surface *sur;
 	SDL_Texture *title, *newgame, *resume, *quit;
 	sur = TTF_RenderText_Solid(SansSherifFont, "-- Chain Reaction Game --", Title_color);
@@ -108,58 +109,65 @@ GAME_STATE startmenu(int *players_number, int *computer_players_number) {
 								return Current_Game_state;
 							}	
 						}
+						redraw = difficulty;
 						if(e.button.x > Diff1.x && e.button.y > Diff1.y && e.button.x < Diff1.x + Diff1.w && e.button.y < Diff1.y + Diff1.h)
 							difficulty = BOT_EASIEST_MODE;
-						if(e.button.x > Diff2.x && e.button.y > Diff2.y && e.button.x < Diff2.x + Diff2.w && e.button.y < Diff2.y + Diff2.h)
+						else if(e.button.x > Diff2.x && e.button.y > Diff2.y && e.button.x < Diff2.x + Diff2.w && e.button.y < Diff2.y + Diff2.h)
 							difficulty = BOT_EASY;
-						if(e.button.x > Diff3.x && e.button.y > Diff3.y && e.button.x < Diff3.x + Diff3.w && e.button.y < Diff3.y + Diff3.h)
+						else if(e.button.x > Diff3.x && e.button.y > Diff3.y && e.button.x < Diff3.x + Diff3.w && e.button.y < Diff3.y + Diff3.h)
 							difficulty = BOT_MEDIUM;
-						if(e.button.x > Diff4.x && e.button.y > Diff4.y && e.button.x < Diff4.x + Diff4.w && e.button.y < Diff4.y + Diff4.h)
+						else if(e.button.x > Diff4.x && e.button.y > Diff4.y && e.button.x < Diff4.x + Diff4.w && e.button.y < Diff4.y + Diff4.h)
 							difficulty = BOT_HARD;	
+						if(redraw != difficulty)
+							redraw = 1;
+						else
+							redraw = 0;
 						break;	
 					default:
 						break;	
 				}
 			}
-			SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
-			SDL_RenderClear(ren);
-			SDL_RenderCopy(ren, title, NULL, &R1);
-			SDL_RenderCopy(ren, newgame, NULL, &R2);
-			SDL_RenderCopy(ren, resume, NULL, &R3);
-			SDL_RenderCopy(ren, quit, NULL, &R4);
-			SDL_RenderCopy(ren, th, NULL, &T);
-			SDL_RenderCopy(ren, tex1, NULL, &Diff1);
-			SDL_RenderCopy(ren, tex2, NULL, &Diff2);
-			SDL_RenderCopy(ren, tex3, NULL, &Diff3);
-			SDL_RenderCopy(ren, tex4, NULL, &Diff4);
-			SDL_SetRenderDrawColor(ren, 200, 255, 200, 10);
-			SDL_RenderDrawLine(ren, 170, 210, 170, 710);
-			SDL_RenderDrawLine(ren, 170, 210, 470, 210);
-			SDL_RenderDrawLine(ren, 470, 710, 170, 710);
-			SDL_RenderDrawLine(ren, 470, 710, 470, 210);
-			SDL_RenderDrawLine(ren, 170, 350, 470, 350);
-			SDL_RenderDrawLine(ren, 170, 550, 470, 550);
-			SDL_RenderDrawRect(ren, &Diff1);
-			SDL_RenderDrawRect(ren, &Diff2);
-			SDL_RenderDrawRect(ren, &Diff3);
-			SDL_RenderDrawRect(ren, &Diff4);
-			SDL_SetRenderDrawColor(ren, 255, 0, 0, 0);
-			switch(difficulty) {
-				case BOT_EASIEST_MODE:
-					SDL_RenderDrawRect(ren, &Diff1);
-					break;
-				case BOT_EASY:
-					SDL_RenderDrawRect(ren, &Diff2);
-					break;
-				case BOT_MEDIUM:
-					SDL_RenderDrawRect(ren, &Diff3);
-					break;
-				default:
-					SDL_RenderDrawRect(ren, &Diff4);
-					break;			
+			if(redraw == 1) {
+				SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
+				SDL_RenderClear(ren);
+				SDL_RenderCopy(ren, title, NULL, &R1);
+				SDL_RenderCopy(ren, newgame, NULL, &R2);
+				SDL_RenderCopy(ren, resume, NULL, &R3);
+				SDL_RenderCopy(ren, quit, NULL, &R4);
+				SDL_RenderCopy(ren, th, NULL, &T);
+				SDL_RenderCopy(ren, tex1, NULL, &Diff1);
+				SDL_RenderCopy(ren, tex2, NULL, &Diff2);
+				SDL_RenderCopy(ren, tex3, NULL, &Diff3);
+				SDL_RenderCopy(ren, tex4, NULL, &Diff4);
+				SDL_SetRenderDrawColor(ren, 200, 255, 200, 10);
+				SDL_RenderDrawLine(ren, 170, 210, 170, 710);
+				SDL_RenderDrawLine(ren, 170, 210, 470, 210);
+				SDL_RenderDrawLine(ren, 470, 710, 170, 710);
+				SDL_RenderDrawLine(ren, 470, 710, 470, 210);
+				SDL_RenderDrawLine(ren, 170, 350, 470, 350);
+				SDL_RenderDrawLine(ren, 170, 550, 470, 550);
+				SDL_RenderDrawRect(ren, &Diff1);
+				SDL_RenderDrawRect(ren, &Diff2);
+				SDL_RenderDrawRect(ren, &Diff3);
+				SDL_RenderDrawRect(ren, &Diff4);
+				SDL_SetRenderDrawColor(ren, 255, 0, 0, 0);
+				switch(difficulty) {
+					case BOT_EASIEST_MODE:
+						SDL_RenderDrawRect(ren, &Diff1);
+						break;
+					case BOT_EASY:
+						SDL_RenderDrawRect(ren, &Diff2);
+						break;
+					case BOT_MEDIUM:
+						SDL_RenderDrawRect(ren, &Diff3);
+						break;
+					default:
+						SDL_RenderDrawRect(ren, &Diff4);
+						break;			
+				}
+				SDL_RenderPresent(ren);
+				redraw = 0;
 			}
-			SDL_RenderPresent(ren);
-			SDL_Delay(1000 / 60);
 		}
 	SDL_DestroyTexture(newgame);
 	SDL_DestroyTexture(resume);
@@ -216,6 +224,7 @@ GAME_STATE startmenu(int *players_number, int *computer_players_number) {
 		/* Declaring this much variables will consume space but will reduce time complexity */
 		SDL_Rect R11 = {10, 200, 180, 80}, R12 = {10, 300, 180, 80}, R13 = {10, 400, 180, 80}, R14 = {10, 500, 180, 80}, R15 = {180, 620, 280, 160}, R21 = {210, 200, 80, 80}, R22 = {320, 200, 80, 80}, R23 = {430, 200, 80, 80}, R31 = {210, 300, 80, 80}, R32 = {320, 300, 80, 80}, R33 = {430, 300, 80, 80}, R41 = {210, 400, 80, 80}, R42 = {320, 400, 80, 80}, R43 = {430, 400, 80, 80}, R51 = {210, 500, 80, 80}, R52 = {320, 500, 80, 80}, R53 = {430, 500, 80, 80}; 
 		flag = FLAG_ON;
+		redraw = 1;
 		while(flag) {
 			while(SDL_PollEvent(&e)) {
 				switch(e.type) {
@@ -270,47 +279,50 @@ GAME_STATE startmenu(int *players_number, int *computer_players_number) {
 							if(i1 + i2 >= 2)
 								flag = FLAG_OFF;
 						}
+						redraw = 1;
 						break;	
 					default:
 						break;
 				}
-			}	
-			SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
-			SDL_RenderClear(ren);
-			SDL_RenderCopy(ren, p, NULL, &R23);
-			SDL_RenderCopy(ren, p, NULL, &R33);
-			SDL_RenderCopy(ren, p, NULL, &R43);
-			SDL_RenderCopy(ren, p, NULL, &R53);
-			SDL_RenderCopy(ren, m, NULL, &R21);
-			SDL_RenderCopy(ren, m, NULL, &R31);
-			SDL_RenderCopy(ren, m, NULL, &R41);
-			SDL_RenderCopy(ren, m, NULL, &R51);
-			SDL_RenderCopy(ren, numpad[i1], NULL, &R22);
-			SDL_RenderCopy(ren, numpad[i2], NULL, &R32);
-			SDL_RenderCopy(ren, numpad[i3], NULL, &R42);
-			SDL_RenderCopy(ren, numpad[i4], NULL, &R52);
-			SDL_RenderCopy(ren, title, NULL, &R1);
-			SDL_RenderCopy(ren, human, NULL, &R11);
-			SDL_RenderCopy(ren, computer, NULL, &R12);
-			SDL_RenderCopy(ren, count_row, NULL, &R13);
-			SDL_RenderCopy(ren, count_col, NULL, &R14);
-			SDL_RenderCopy(ren, choose, NULL, &R15);
-			SDL_SetRenderDrawColor(ren, 150, 255, 150, 0);
-			SDL_RenderDrawRect(ren, &R21);
-			SDL_RenderDrawRect(ren, &R22);
-			SDL_RenderDrawRect(ren, &R23);
-			SDL_RenderDrawRect(ren, &R31);
-			SDL_RenderDrawRect(ren, &R32);
-			SDL_RenderDrawRect(ren, &R33);
-			SDL_RenderDrawRect(ren, &R41);
-			SDL_RenderDrawRect(ren, &R42);
-			SDL_RenderDrawRect(ren, &R43);
-			SDL_RenderDrawRect(ren, &R51);
-			SDL_RenderDrawRect(ren, &R52);
-			SDL_RenderDrawRect(ren, &R53);
-			SDL_RenderDrawRect(ren, &R15);
-			SDL_RenderPresent(ren);
-			SDL_Delay(1000 / 60);
+			}
+			if(redraw == 1) {	
+				SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
+				SDL_RenderClear(ren);
+				SDL_RenderCopy(ren, p, NULL, &R23);
+				SDL_RenderCopy(ren, p, NULL, &R33);
+				SDL_RenderCopy(ren, p, NULL, &R43);
+				SDL_RenderCopy(ren, p, NULL, &R53);
+				SDL_RenderCopy(ren, m, NULL, &R21);
+				SDL_RenderCopy(ren, m, NULL, &R31);
+				SDL_RenderCopy(ren, m, NULL, &R41);
+				SDL_RenderCopy(ren, m, NULL, &R51);
+				SDL_RenderCopy(ren, numpad[i1], NULL, &R22);
+				SDL_RenderCopy(ren, numpad[i2], NULL, &R32);
+				SDL_RenderCopy(ren, numpad[i3], NULL, &R42);
+				SDL_RenderCopy(ren, numpad[i4], NULL, &R52);
+				SDL_RenderCopy(ren, title, NULL, &R1);
+				SDL_RenderCopy(ren, human, NULL, &R11);
+				SDL_RenderCopy(ren, computer, NULL, &R12);
+				SDL_RenderCopy(ren, count_row, NULL, &R13);
+				SDL_RenderCopy(ren, count_col, NULL, &R14);
+				SDL_RenderCopy(ren, choose, NULL, &R15);
+				SDL_SetRenderDrawColor(ren, 150, 255, 150, 0);
+				SDL_RenderDrawRect(ren, &R21);
+				SDL_RenderDrawRect(ren, &R22);
+				SDL_RenderDrawRect(ren, &R23);
+				SDL_RenderDrawRect(ren, &R31);
+				SDL_RenderDrawRect(ren, &R32);
+				SDL_RenderDrawRect(ren, &R33);
+				SDL_RenderDrawRect(ren, &R41);
+				SDL_RenderDrawRect(ren, &R42);
+				SDL_RenderDrawRect(ren, &R43);
+				SDL_RenderDrawRect(ren, &R51);
+				SDL_RenderDrawRect(ren, &R52);
+				SDL_RenderDrawRect(ren, &R53);
+				SDL_RenderDrawRect(ren, &R15);
+				SDL_RenderPresent(ren);
+				redraw = 0;
+			}
 		}
 		ColorRow = (SDL_Color *)malloc(sizeof(SDL_Color) * (i1 + i2));
 		for(i = 0; i < 20; i++)
@@ -337,6 +349,7 @@ GAME_STATE startmenu(int *players_number, int *computer_players_number) {
 		Go_tex = SDL_CreateTextureFromSurface(ren, sur);
 		SDL_FreeSurface(sur);
 		SDL_Color choosed = {255, 0, 0};
+		redraw = 1;
 		for(ci = 0; ci < i1 + i2; ) {
 			while(SDL_PollEvent(&e)) {
 				switch(e.type) {
@@ -344,6 +357,7 @@ GAME_STATE startmenu(int *players_number, int *computer_players_number) {
 						return QUIT;
 						break;
 					case SDL_MOUSEBUTTONDOWN:
+						redraw = 1;
 						x = e.button.x;
 						y = e.button.y;
 						if(x > R2.x && x < (R2.x + 255 * 2) && y > R2.y + R2.h && y < (R2.y + R2.h + 255 * 2)) {
@@ -369,28 +383,30 @@ GAME_STATE startmenu(int *players_number, int *computer_players_number) {
 						break;	
 				}		
 			}
-			SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
-			SDL_RenderClear(ren);
-			for(xi = 0; xi < 255 * 2; xi++)
-				for(yi = 0; yi < 255 * 2; yi++) {
-					SDL_SetRenderDrawColor(ren, xi / 2, yi / 2, hueset, 0);
-					SDL_RenderDrawPoint(ren, R2.x + xi, R2.y + R2.h + yi);
-				}
-			SDL_SetRenderDrawColor(ren, 0, 0, 255, 0);	
-			for(yi = 0, xi = 250; yi < 255 * 2; yi++, xi -= 0.5) {
-				if(xi < 0)
-					xi = 0;
-				SDL_SetRenderDrawColor(ren, 0, 0, yi / 2, xi);
-				SDL_RenderDrawLine(ren, R2.x + 270 * 2, R2.y + R2.h + yi, R2.x + 270 * 2 + 40, R2.y + R2.h + yi);
-			}	
-			AD_DrawCircle(&ren, R2.x + R2.w + R2.h / 2, R2.y + R2.h / 2, R2.h / 2 - 10, choosed.r, choosed.g, choosed.b, 0);	
-			SDL_RenderCopy(ren, title, NULL, &R1);	
-			SDL_RenderCopy(ren, choose, NULL, &R2);	
-			SDL_RenderCopy(ren, Go_tex, NULL, &GO_Rect);
-			SDL_SetRenderDrawColor(ren, 255, 255, 255, 0);
-			SDL_RenderDrawRect(ren, &GO_Rect);
-			SDL_RenderPresent(ren);
-			SDL_Delay(1000 / 60);	
+			if(redraw == 1) {
+				SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
+				SDL_RenderClear(ren);
+				for(xi = 0; xi < 255 * 2; xi++)
+					for(yi = 0; yi < 255 * 2; yi++) {
+						SDL_SetRenderDrawColor(ren, xi / 2, yi / 2, hueset, 0);
+						SDL_RenderDrawPoint(ren, R2.x + xi, R2.y + R2.h + yi);
+					}
+				SDL_SetRenderDrawColor(ren, 0, 0, 255, 0);	
+				for(yi = 0, xi = 250; yi < 255 * 2; yi++, xi -= 0.5) {
+					if(xi < 0)
+						xi = 0;
+					SDL_SetRenderDrawColor(ren, 0, 0, yi / 2, xi);
+					SDL_RenderDrawLine(ren, R2.x + 270 * 2, R2.y + R2.h + yi, R2.x + 270 * 2 + 40, R2.y + R2.h + yi);
+				}	
+				AD_DrawCircle(&ren, R2.x + R2.w + R2.h / 2, R2.y + R2.h / 2, R2.h / 2 - 10, choosed.r, choosed.g, choosed.b, 0);	
+				SDL_RenderCopy(ren, title, NULL, &R1);	
+				SDL_RenderCopy(ren, choose, NULL, &R2);	
+				SDL_RenderCopy(ren, Go_tex, NULL, &GO_Rect);
+				SDL_SetRenderDrawColor(ren, 255, 255, 255, 0);
+				SDL_RenderDrawRect(ren, &GO_Rect);
+				SDL_RenderPresent(ren);
+				redraw = 0;
+			}
 		}
 		*players_number = i1;
 		*computer_players_number = i2;
