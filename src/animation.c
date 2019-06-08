@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
-#include "chain.h"
+#include "headers/chain.h"
 #include <time.h>
 
 extern int rows, columns, center, speed;

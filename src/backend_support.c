@@ -5,7 +5,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <SDL2/SDL.h>
-#include "chain.h"
+#include "headers/chain.h"
 
 extern int rows, columns, speed;
 extern SDL_Color *ColorRow;
@@ -234,7 +234,9 @@ STAT ResumeGame(board *b, player **pl, player **playerstore, player **current, i
 		strcpy(filename, "savedgame1.chain");
 		flag = FLAG_ON;
 	}	
-	fd = open(filename, O_RDONLY);
+	char pre[50] = "../support/";
+	strcat(pre, filename);
+	fd = open(pre, O_RDONLY);
 	if(flag == FLAG_ON)
 		free(filename);
 	if(fd == -1) {
@@ -305,7 +307,9 @@ void SaveGame(board b, player *pl, player *current, int players_number, int comp
 		strcpy(filename, "savedgame1.chain");
 		flag = FLAG_ON;
 	}	
-	fd = open(filename, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
+	char pre[50] = "../support/";
+	strcat(pre, filename);
+	fd = open(pre, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
 	if(fd == -1) {
 		printf("Overwrite not done\n");
 		return;
@@ -391,9 +395,9 @@ void DestroyBoard(board *b) {
 void Display_help(void) {
 	int fd;
 	char b;
-	fd = open("chain_help.txt", O_RDONLY);
+	fd = open("../support/chain_help.txt", O_RDONLY);
 	if(fd == -1) {
-		fprintf(stderr, "Could not find help.txt\n");
+		fprintf(stderr, "Could not find help.txt in support folder\n");
 		return;
 	}	
 	while(read(fd, &b, sizeof(char)))

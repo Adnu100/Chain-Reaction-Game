@@ -1,6 +1,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
-#include "chain.h"
+#include "headers/chain.h"
 
 extern int rows, columns;
 extern player_type difficulty;
@@ -21,9 +21,9 @@ void TTF_Initialize_All(void) {
 			fprintf(stderr, "Could not Initiate Fonts : %s\n", TTF_GetError());
 			exit(4);
 		}
-		SansSherifFont = TTF_OpenFont("font.ttf", 50);
+		SansSherifFont = TTF_OpenFont("../support/font.ttf", 50);
 		if(SansSherifFont == NULL) {
-			fprintf(stderr, "Could not find the font loader file : %s", TTF_GetError());
+			fprintf(stderr, "Could not find the font loader file : %s\n", TTF_GetError());
 			exit(5);
 		}
 	}
