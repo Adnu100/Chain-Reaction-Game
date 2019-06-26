@@ -14,3 +14,5 @@ visual_support.o: visual_support.c headers/chain.h headers/bucket.h
 	cc visual_support.c -c -Wall	
 bucket.o: bucket.c headers/bucket.h
 	cc bucket.c -c -Wall	
+clean:
+	rm *.o *~ -f
