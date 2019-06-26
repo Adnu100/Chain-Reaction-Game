@@ -50,5 +50,5 @@ You can know more about the command line options to be given by `-h` or `--help`
 
 `./project --help`
 
-### License
+## License
 This project is licensed under GPL-3.0. See LICENSE for details.
