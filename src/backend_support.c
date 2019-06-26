@@ -362,6 +362,7 @@ void SaveGame(board b, player *pl, player *current, int players_number, int comp
 		free(filename);	
 }
 
+/* List the saved games in support/ directory and print them */
 void ShowSavedGames() {
 	DIR *d = opendir("./support");
 	if(d == NULL) {
