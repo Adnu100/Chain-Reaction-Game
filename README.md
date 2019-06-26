@@ -9,11 +9,13 @@ Game is written in pure C language and SDL2 (Simple DirectMedia Layer - A game e
 
 ## Getting Started
 After cloning this project on your linux PC, go to folder and open in terminal. Just a few things to do before you can play this amazing game!
+
 ***The cell size can be varied depending on your PC resolution by changing macro `CELL_SIZE` in `src/headers/chain.h`***
 
 ### Prerequisites
 This project required a C compiler (gcc prefered) and libraries like SDL2, SDL2_ttf installed on device. Make sure you have them.
 simply running Install.sh would install all the required libraries. Run
+
 `bash Install.sh`
 
 Type password if asked for and press enter.
