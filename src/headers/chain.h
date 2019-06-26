@@ -49,6 +49,7 @@ void ComputerPlayerMemoryFree(void);
 void SetMove(board b, player *current, int *i, int *j);
 int Random(int Range_Start, int Range_End);
 void SaveGame(board b, player *pl, player *current, int players_number, int computer_players_number, char *filename, int moves);
+void ShowSavedGames(void);
 STAT ResumeGame(board *b, player **pl, player **playerstore, player **current, int *players_number, int *computer_players_number, char *filename, int *moves);
 void TTF_Initialize_All(void);
 void Display_help(void);

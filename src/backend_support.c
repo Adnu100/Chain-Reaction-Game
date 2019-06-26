@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <dirent.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -109,27 +110,6 @@ void advance(board b, int i, int j, player *current, SDL_Renderer **ren) {
 	buffer B;
 	binit(&buc);
 	binit(&CTA);
-	/*
-	 *      Another Method to do this. Renderer not needed. Fast; But animation not supported.	
-	 *	
-	 *	if(b[i][j].balls == b[i][j].capacity) {
-	 *		b[i][j].balls = 0;
-	 *		b[i][j].p = NULL;
-	 *		b[i][j].wave = wave;
-	 *		if(i != 0) 
-	 *			advance(b, i - 1, j, current);
-	 *		if(i != rows - 1) 
-	 *			advance(b, i + 1, j, current);
-	 *		if(j != 0) 
-	 *			advance(b, i, j - 1, current);
-	 *		if(j != columns - 1) 
-	 *			advance(b, i, j + 1, current);
-	 *	}
-	 *	else {
-	 *		b[i][j].p = current;	
-	 *		b[i][j].balls++;
-	 *	}
-	 */
 	b[i][j].p = current; 
 	b[i][j].balls++;
 	while(flag3) {
@@ -236,6 +216,8 @@ STAT ResumeGame(board *b, player **pl, player **playerstore, player **current, i
 	}	
 	char pre[50] = "support/";
 	strcat(pre, filename);
+	if(!strstr(pre, ".chain"))
+		strcat(pre, ".chain");
 	fd = open(pre, O_RDONLY);
 	if(flag == FLAG_ON)
 		free(filename);
@@ -309,6 +291,8 @@ void SaveGame(board b, player *pl, player *current, int players_number, int comp
 	}	
 	char pre[50] = "support/";
 	strcat(pre, filename);
+	if(!strstr(pre, ".chain"))
+		strcat(pre, ".chain");
 	fd = open(pre, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
 	if(fd == -1) {
 		printf("Overwrite not done\n");
@@ -376,6 +360,29 @@ void SaveGame(board b, player *pl, player *current, int players_number, int comp
 	printf("Game saved successfully in file %s\n", filename);
 	if(flag == FLAG_ON)
 		free(filename);	
+}
+
+void ShowSavedGames() {
+	DIR *d = opendir("./support");
+	if(d == NULL) {
+		printf("Could not open support directory.\n");
+		return;
+	}
+	struct dirent *entry;
+	char *po;
+	int count = 0;
+	while((entry = readdir(d)) != NULL)
+		if((po = strstr(entry->d_name, ".chain")) !=  NULL)
+			if(strlen(po) == strlen(".chain")) {
+				if(count == 0)
+					printf("Saved Games:\n(Use ./project -R (or --resume) [filename.chain] to resume the respective saved game)\n\n");
+				printf("\t%s\n", entry->d_name);
+				count++;
+			}
+	if(count)
+		printf("\nTotal %d Saved Game(s)\n", count);
+	else
+		printf("No Saved Games found\n");
 }
 
 /* destroy the player row */

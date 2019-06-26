@@ -32,9 +32,10 @@ int main(int argc, char *argv[]) {
 		{"super-fast", no_argument, NULL, '4'},
 		{"no-animations", no_argument, NULL, 'N'},
 		{"resume", required_argument, NULL, 'R'},
+		{"show", no_argument, NULL, 'S'},
 		{NULL, 0, NULL, 0}
 	};
-	while((opt = getopt_long(argc, argv, "r:c:qhH:C:s:R:D:N", optarr, &opt_index)) != -1) {
+	while((opt = getopt_long(argc, argv, "r:c:qShH:C:s:R:D:N", optarr, &opt_index)) != -1) {
 		switch(opt) {
 			case '1':
 				speed = 3;
@@ -79,7 +80,6 @@ int main(int argc, char *argv[]) {
 			case 's':
 				savefile = (char *)malloc(sizeof(char) * strlen(optarg) + 7);
 				strcpy(savefile, optarg);
-				strcat(savefile, ".chain");
 				break;
 			case 'R':
 				if(!RES_FLAG) {
@@ -87,8 +87,11 @@ int main(int argc, char *argv[]) {
 					strcpy(resumefile, optarg);		
 					QUICK_START_FLAG = FLAG_ON;
 					RES_FLAG = FLAG_ON;
-					if(ResumeGame(&b, &pl, &pl2, &current, &players_number, &computer_players_number, resumefile, &moves) == OVER)
+					if(ResumeGame(&b, &pl, &pl2, &current, &players_number, &computer_players_number, resumefile, &moves) == OVER) {
+						free(resumefile);
 						return 0;
+					}
+					free(resumefile);
 				}	
 				break;	
 			case 'H':	
@@ -121,6 +124,10 @@ int main(int argc, char *argv[]) {
 					}	
 				}	
 				break;
+			case 'S':
+				ShowSavedGames();
+				return 0;
+				break;
 			case 'L':
 				if(!RES_FLAG) {
 					QUICK_START_FLAG = FLAG_ON;
@@ -144,8 +151,9 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 	  
-	/* If the user has not given the option "quick-start" or provided game variables then let him set the game 		 * variables, 
-	 * First ask user whether to start a new game or resume a game. For new game, define table rows, columns, 		 * human and computer players in a window.
+	/* If the user has not given the option "quick-start" or provided game variables then let him set the game variables, 
+	 * First ask user whether to start a new game or resume a game. 
+	 * For new game, define table rows, columns, human and computer players in a window.
 	 * Also, ask if user wants to quit.
 	 */
 	if(!QUICK_START_FLAG)  

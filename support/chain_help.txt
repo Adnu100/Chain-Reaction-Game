@@ -20,6 +20,7 @@ Mandatory arguments to long options are mandatory for short options too
   -R --resume FILE	directly resume the game in FILE 
   --resume-default	resume the last saved game in file "savedgame1.chain"
   			(if exists else returns)
+  -S --show		show all the saved games if present
   -D NUM		set computer player difficulty to NUM (NUM can be 
   			any value between 1, 2, 3, 4. higher number indicates
   			higher difficulty. if NUM is beyond 4, difficulty 
