@@ -6,7 +6,7 @@
 #include "headers/chain.h"
 
 /* Number of rows and columns will be required at each and every step of game and for each function of the program, so declaring them as Global variables */
-int rows = -1, columns = -1, speed = 4;
+int rows = -1, columns = -1, speed = 5;
 SDL_Color *ColorRow = NULL;
 player_type difficulty = BOT_MEDIUM;
 
@@ -38,16 +38,16 @@ int main(int argc, char *argv[]) {
 	while((opt = getopt_long(argc, argv, "r:c:qShH:C:s:R:D:N", optarr, &opt_index)) != -1) {
 		switch(opt) {
 			case '1':
-				speed = 3;
-				break;
-			case '2':
 				speed = 4;
 				break;
+			case '2':
+				speed = 6;
+				break;
 			case '3':
-				speed = 5;
+				speed = 10;
 				break;		
 			case '4':
-				speed = 8;
+				speed = 16;
 				break;	
 			case 'N':
 				speed = -1;

@@ -456,7 +456,9 @@ GAME_STATE START_THE_GAME(board *b, player **pl, int players_number, int compute
 	int i, j, Moves = *moves; 
 	SDL_Event e;
 	STAT gamestat = PLAYING; 
+	unsigned int ticks, tempticks;
 	while(gamestat != OVER) {
+		ticks = SDL_GetTicks();
 		while(SDL_PollEvent(&e)) {
 			switch(e.type) {
 				case SDL_QUIT :
@@ -488,7 +490,9 @@ GAME_STATE START_THE_GAME(board *b, player **pl, int players_number, int compute
 							j = e.button.x / CELL_SIDE;
 							i = e.button.y / CELL_SIDE;
 							if((*b)[i][j].p == NULL || (*b)[i][j].p == (*current)) {
+								tempticks = ticks;
 								advance(*b, i, j, (*current) , &ren); 	
+								ticks = tempticks;
 								(*current) = (*current)->next;
 								if(Moves >= players_number + computer_players_number)
 									Delete_Out_Players(*b, pl, &(*current)); 		
@@ -515,6 +519,9 @@ GAME_STATE START_THE_GAME(board *b, player **pl, int players_number, int compute
 		SDL_RenderDrawRect(ren, &Rect1);
 		SDL_RenderDrawRect(ren, &Rect2);
 		AD_DrawCircle(&ren, center, Rect1.y + CELL_SIDE / 2, CELL_SIDE / 2 - CELL_SIDE /10, (*current)->r, (*current)->g, (*current)->b, (*current)->a);
+		ticks = SDL_GetTicks() - ticks;
+		if(ticks < 22)
+			SDL_Delay(22 - ticks);
 		SDL_RenderPresent(ren);
 		if((*current)->type != HUMAN) {
 				if((*current)->next != (*current)) {
@@ -526,7 +533,6 @@ GAME_STATE START_THE_GAME(board *b, player **pl, int players_number, int compute
 					Moves++;	
 				}	
 		}
-		SDL_Delay(1000 / 30);
 	}
 	*moves = Moves;
 	if(computer_players_number > 0)

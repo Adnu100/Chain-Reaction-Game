@@ -12,8 +12,10 @@ void AD_AnimateScreen(SDL_Renderer **ren, board b, player *current, bucket *buc)
 	int pos, i, j, k;
 	buffer B;
 	int store = storage(buc);
+	unsigned int ticks_copy;
 	if(speed > 0) {
 		for(pos = 0; pos <= CELL_SIDE; pos += speed) {
+			ticks_copy = SDL_GetTicks();
 			SDL_SetRenderDrawColor(*ren, 0, 0, 0, 0);
 			SDL_RenderClear(*ren);
 			for(k = 0; k < store; k++) {
@@ -36,8 +38,10 @@ void AD_AnimateScreen(SDL_Renderer **ren, board b, player *current, bucket *buc)
 			SDL_RenderDrawRect(*ren, &Rect1);
 			SDL_RenderDrawRect(*ren, &Rect2);
 			AD_DrawCircle(ren, center, Rect1.y + CELL_SIDE / 2, CELL_SIDE / 2 - CELL_SIDE /10, current->r, current->g, current->b, current->a);
+			ticks_copy = SDL_GetTicks() - ticks_copy;
+			if(ticks_copy < 22)
+				SDL_Delay(22 - ticks_copy);
 			SDL_RenderPresent(*ren);		
-			SDL_Delay(1000 / 60);	
 		}
 		SDL_RenderClear(*ren);
 	}
