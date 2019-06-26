@@ -22,7 +22,6 @@ Or, to install individually if you already have some of them- first, to install 
 
 ```
 sudo apt-get install gcc
-
 ```
 
 Then to install SDL2 and SDL2_ttf
