@@ -20,7 +20,10 @@ Type password if asked for and press enter.
 
 Or, to install individually if you already have some of them- first, to install gcc, type
 
-`sudo apt-get install gcc`
+```
+  sudo apt-get install gcc
+
+```
 
 Then to install SDL2 and SDL2_ttf
 
@@ -43,6 +46,7 @@ Finally, to start the game, run
 You can know more about the command line options to be given by `-h` or `--help` 
 
 `./project -h`
+
 `./project --help`
 
 ### License
