@@ -11,6 +11,7 @@
 extern int rows, columns, speed;
 extern SDL_Color *ColorRow;
 extern player_type difficulty;
+extern char *SAVED_GAME_PATH;
 
 /* All the backend functions like handling player deleting, advancing the board, game saving and resuming etc are written here */
 
@@ -214,7 +215,7 @@ STAT ResumeGame(board *b, player **pl, player **playerstore, player **current, i
 		strcpy(filename, "savedgame1.chain");
 		flag = FLAG_ON;
 	}	
-	char pre[50] = "support/";
+	char pre[256] = "support/";
 	strcat(pre, filename);
 	if(!strstr(pre, ".chain"))
 		strcat(pre, ".chain");
@@ -222,8 +223,19 @@ STAT ResumeGame(board *b, player **pl, player **playerstore, player **current, i
 	if(flag == FLAG_ON)
 		free(filename);
 	if(fd == -1) {
-		printf("Could not find the saved game file\n");
-		return OVER;
+		if(SAVED_GAME_PATH == NULL) {
+			printf("Could not find the saved game file\n");
+			return OVER;
+		}
+		else {
+			strcpy(pre, SAVED_GAME_PATH);
+			strcat(pre, filename);
+			fd = open(pre, O_RDONLY);
+			if(fd == -1) {
+				printf("Could not find the saved game file\n");
+				return OVER;
+			}
+		}
 	}	
 	read(fd, &rows, sizeof(int));
 	read(fd, &columns, sizeof(int));
@@ -289,10 +301,16 @@ void SaveGame(board b, player *pl, player *current, int players_number, int comp
 		strcpy(filename, "savedgame1.chain");
 		flag = FLAG_ON;
 	}	
-	char pre[50] = "support/";
+	char pre[256] = "support/";
 	strcat(pre, filename);
 	if(!strstr(pre, ".chain"))
 		strcat(pre, ".chain");
+	if(SAVED_GAME_PATH != NULL) {
+		strcpy(pre, SAVED_GAME_PATH);
+		strcat(pre, filename);
+		if(!strstr(pre, ".chain"))
+			strcat(pre, ".chain");
+	}
 	fd = open(pre, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
 	if(fd == -1) {
 		printf("Overwrite not done\n");
@@ -365,21 +383,34 @@ void SaveGame(board b, player *pl, player *current, int players_number, int comp
 /* List the saved games in support/ directory and print them */
 void ShowSavedGames() {
 	DIR *d = opendir("./support");
-	if(d == NULL) {
-		printf("Could not open support directory.\n");
-		return;
-	}
 	struct dirent *entry;
 	char *po;
 	int count = 0;
-	while((entry = readdir(d)) != NULL)
-		if((po = strstr(entry->d_name, ".chain")) !=  NULL)
-			if(strlen(po) == strlen(".chain")) {
-				if(count == 0)
-					printf("Saved Games:\n(Use ./project -R (or --resume) [filename.chain] to resume the respective saved game)\n\n");
-				printf("\t%s\n", entry->d_name);
-				count++;
-			}
+	if(d != NULL) {
+		while((entry = readdir(d)) != NULL)
+			if((po = strstr(entry->d_name, ".chain")) !=  NULL)
+				if(strlen(po) == strlen(".chain")) {
+					if(count == 0)
+						printf("Saved Games:\n(Use ./project -R (or --resume) [filename.chain] to resume the respective saved game)\n\n");
+					printf("\t%s\n", entry->d_name);
+					count++;
+				}
+		closedir(d);
+	}
+	if(SAVED_GAME_PATH != NULL) {
+		d = opendir(SAVED_GAME_PATH);
+		if(d != NULL) {
+			while((entry = readdir(d)) != NULL)
+				if((po = strstr(entry->d_name, ".chain")) !=  NULL)
+					if(strlen(po) == strlen(".chain")) {
+						if(count == 0)
+							printf("Saved Games:\n(Use ./project -R (or --resume) [filename.chain] to resume the respective saved game)\n\n");
+						printf("\t%s\n", entry->d_name);
+						count++;
+					}
+			closedir(d);
+		}
+	}
 	if(count)
 		printf("\nTotal %d Saved Game(s)\n", count);
 	else
@@ -405,8 +436,20 @@ void Display_help(void) {
 	char b;
 	fd = open("support/chain_help.txt", O_RDONLY);
 	if(fd == -1) {
-		fprintf(stderr, "Could not find help.txt in support folder\n");
-		return;
+		if(SAVED_GAME_PATH == NULL) {
+			fprintf(stderr, "Could not find help.txt in support folder\n");
+			return;
+		}
+		else {
+			char path[256];
+			strcpy(path, SAVED_GAME_PATH);
+			strcat(path, "chain_help.txt");
+			fd = open(path, O_RDONLY);
+			if(fd == -1) {
+				fprintf(stderr, "Could not find help.txt in support folder\n");
+				return;
+			}
+		}
 	}	
 	while(read(fd, &b, sizeof(char)))
 		printf("%c", b);

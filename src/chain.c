@@ -9,6 +9,7 @@
 int rows = -1, columns = -1, speed = 5;
 SDL_Color *ColorRow = NULL;
 player_type difficulty = BOT_MEDIUM;
+char *SAVED_GAME_PATH = NULL, *TTF_PATH = NULL;
 
 int main(int argc, char *argv[]) {
 	/* Declare human players and computer players variables, a board and player row, also the savefile, 		 *resumefile name and other useful variables
@@ -25,6 +26,8 @@ int main(int argc, char *argv[]) {
 		{"quick-start", no_argument, NULL, 'q'}, 
 		{"help", no_argument, NULL, 'h'}, 
 		{"save", required_argument, NULL, 's'}, 
+		{"TTF_PATH", required_argument, NULL, 'T'},
+		{"SAVED_GAME_PATH", required_argument, NULL, 'G'},
 		{"resume-default", no_argument, NULL, 'L'},
 		{"slow", no_argument, NULL, '1'},
 		{"medium", no_argument, NULL, '2'},
@@ -136,6 +139,14 @@ int main(int argc, char *argv[]) {
 						return 0;
 				}		
 				break;	
+			case 'T':
+				TTF_PATH = (char *)malloc(sizeof(char) * strlen(optarg) + 1);
+				strcpy(TTF_PATH, optarg);
+				break;
+			case 'G':
+				SAVED_GAME_PATH = (char *)malloc(sizeof(char) * strlen(optarg) + 1);
+				strcpy(SAVED_GAME_PATH, optarg);
+				break;
 			case '?':
 				printf("Type %s --help | %s -h for help\n", argv[0], argv[0]);
 				exit(7);

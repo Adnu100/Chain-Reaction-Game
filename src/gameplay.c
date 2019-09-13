@@ -5,6 +5,7 @@
 extern int rows, columns;
 extern player_type difficulty;
 extern SDL_Color *ColorRow;
+extern char *TTF_PATH;
 
 int center;
 TTF_Font *SansSherifFont;
@@ -21,7 +22,10 @@ void TTF_Initialize_All(void) {
 			fprintf(stderr, "Could not Initiate Fonts : %s\n", TTF_GetError());
 			exit(4);
 		}
-		SansSherifFont = TTF_OpenFont("support/font.ttf", 50);
+		if(TTF_PATH == NULL)
+			SansSherifFont = TTF_OpenFont("support/font.ttf", 50);
+		else
+			SansSherifFont = TTF_OpenFont(TTF_PATH, 50);
 		if(SansSherifFont == NULL) {
 			fprintf(stderr, "Could not find the font loader file : %s\n", TTF_GetError());
 			exit(5);
