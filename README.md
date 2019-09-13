@@ -38,17 +38,38 @@ To install the game, run make.sh
 
 `bash make.sh`
 
+or simply
+
+`./make.sh`
+
 ### Running
 
 Finally, to start the game, run 
 
-`./project`
+`chain`
+
+or 
+
+`./chain`
+
+or, you can even launch the game by searching chain in the ubuntu search or double click the icon
 
 You can know more about the command line options to be given by `-h` or `--help` 
 
-`./project -h`
+`./chain -h`
 
-`./project --help`
+`./chain --help`
+
+## Uninstallation
+To uninstall the game, run uninstall.sh script
+
+`bash uninstall.sh`
+
+or 
+
+`./uninstall.sh`
+
+you can install game again whenever needed by running make.sh script
 
 ## License
 This project is licensed under GPL-3.0. See LICENSE for details.
