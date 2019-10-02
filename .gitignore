@@ -2,3 +2,5 @@
 project
 *.chain
 support/*.chain
+chain
+*desktop
