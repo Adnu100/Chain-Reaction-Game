@@ -60,7 +60,7 @@ You can know more about the command line options to be given by `-h` or `--help`
 
 `./chain --help`
 
-## Uninstallation
+### Uninstallation
 To uninstall the game, run uninstall.sh script
 
 `bash uninstall.sh`
