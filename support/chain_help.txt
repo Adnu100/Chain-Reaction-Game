@@ -5,7 +5,7 @@ A game for programmers when they get bored of programming. A chain
 reaction game supporting unlimited human and computer players in 
 a board of any size. 
 
-Usage: ./project [options] [values]
+Usage: chain [options] [values]
 
 Mandatory arguments to long options are mandatory for short options too
   -q --quick-start	quick start (without a start menu) game on a board

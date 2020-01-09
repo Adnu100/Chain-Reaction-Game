@@ -34,7 +34,7 @@ then
 		echo "#! /bin/bash" >> /usr/bin/chain
 		echo "" >> /usr/bin/chain
 		echo "~/.chainreaction/chain --TTF_PATH ~/.chainreaction/font.ttf --SAVED_GAME_PATH ~/.chainreaction/ \$*" >> /usr/bin/chain
-		chmod +x ~/bin/bash
+		chmod +x /usr/bin/chain
 	fi
 fi
 echo "creating .chainreaction directory in home..."
