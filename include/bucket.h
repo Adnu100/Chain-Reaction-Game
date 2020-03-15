@@ -5,6 +5,7 @@ typedef struct buffer {
 	int x, y;
 } buffer;
 
+/* linked list node containing single forward link */
 typedef struct node {
 	buffer B;
 	struct node *next;
@@ -13,7 +14,7 @@ typedef struct node {
 typedef node *bucket;
 
 /* each node is connected to the next node like 
- * bucket -> |_| -> |_| -> |_| -> NULL
+ * list -> |_| -> |_| -> |_| -> NULL
  */ 
 
 /* Functions which will be needed */

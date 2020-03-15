@@ -6,7 +6,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <SDL2/SDL.h>
-#include "headers/chain.h"
+#include <chain.h>
 
 extern int rows, columns, speed;
 extern SDL_Color *ColorRow;

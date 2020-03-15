@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
-#include "headers/chain.h"
+#include <chain.h>
 
 /* Number of rows and columns will be required at each and every step of game and for each function of the program, so declaring them as Global variables */
 int rows = -1, columns = -1, speed = 5;

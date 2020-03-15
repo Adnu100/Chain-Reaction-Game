@@ -1,14 +1,27 @@
+#include <SDL2/SDL.h>
 #include "bucket.h"
 
+/* Give -DCELL_SIDE option while compiling to configure the CELL_SIDE
+ * in the game.
+ * (Add -DCELL_SIDE=side_length to the CFLAGS in the Makefile where 
+ * side_length is any number)
+ * This will result in bigger or smaller board but may affect
+ * performance. Original value is prefered, however can be changed 
+ * depending the computer monitor screen you are using 
+ */
+#ifndef CELL_SIDE 
 #define CELL_SIDE 70
+#endif
 
 #define FLAG_OFF 0
 #define FLAG_ON 1
 
 /* Important Enumerations */
-typedef enum STAT {PLAYING, OVER} STAT;
+typedef enum STAT {PLAYING, OVER} STAT;		//game stat boolean
 typedef enum player_type {HUMAN, BOT_EASIEST_MODE, BOT_EASY, BOT_MEDIUM, BOT_HARD} player_type;
-typedef enum GAME_STATE {NEW_GAME, RESUME, SAVE, QUIT, NONE} GAME_STATE;
+											//player type 
+typedef enum GAME_STATE {NEW_GAME, RESUME, SAVE, QUIT, NONE} GAME_STATE;	
+											//state of current game
 
 /* A structure containing player information */
 typedef struct player {
@@ -18,7 +31,9 @@ typedef struct player {
 	struct player *next;
 } player;	
 
-/* A unit cell containing information about capacity of balls it can carry, number of balls and the pointer to player which holds the position of that cell */
+/* A unit cell containing information about capacity of balls 
+ * it can carry, number of balls and the pointer to player 
+ * which holds the position of that cell */
 struct cell {
 	int balls;
 	int capacity;

@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "headers/bucket.h"
+#include <bucket.h>
 
 void binit(bucket *b) {
 	*b = NULL;

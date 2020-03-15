@@ -1,11 +1,8 @@
 #! /bin/bash
 
 echo "installing the game..."
-cd src/
-make -s
-make clean -s
-mv chain ../
-cd ../
+make 
+make clean 
 echo -e "[Desktop Entry]
 Version=1.0
 Type=Application
