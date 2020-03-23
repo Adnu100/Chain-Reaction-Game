@@ -1,6 +1,6 @@
 CC = gcc
-MAINCFLAGS = -lSDL2 -lSDL2_ttf -lm 
-CFLAGS = -c -Wall
+MAINCFLAGS = -lSDL2 -lSDL2_ttf -lm -O3
+CFLAGS = -c -Wall -O3 -Wno-unused-result
 INC = include
 OBJ = obj
 SRC = src
