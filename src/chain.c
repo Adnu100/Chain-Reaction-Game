@@ -2,6 +2,8 @@
 #include <SDL2/SDL.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
 #include <getopt.h>
 #include <chain.h>
 
@@ -18,7 +20,7 @@ int main(int argc, char *argv[]) {
 	player *pl, *pl2, *current;
 	int players_number = -1, computer_players_number = -1, moves = 0;
 	char *savefile = NULL, *resumefile = NULL;
-	int QUICK_START_FLAG = FLAG_OFF, RES_FLAG = FLAG_OFF;
+	int QUICK_START_FLAG = FLAG_OFF, RES_FLAG = FLAG_OFF, PRINT_STAT = FLAG_ON;
 	
 	/* process the command line options first */
 	int opt, opt_index;
@@ -36,9 +38,10 @@ int main(int argc, char *argv[]) {
 		{"no-animations", no_argument, NULL, 'N'},
 		{"resume", required_argument, NULL, 'R'},
 		{"show", no_argument, NULL, 'S'},
+		{"noblock", no_argument, NULL, 'n'},
 		{NULL, 0, NULL, 0}
 	};
-	while((opt = getopt_long(argc, argv, "r:c:qShH:C:s:R:D:N", optarr, &opt_index)) != -1) {
+	while((opt = getopt_long(argc, argv, "r:c:qnShH:C:s:R:D:N", optarr, &opt_index)) != -1) {
 		switch(opt) {
 			case '1':
 				speed = 4;
@@ -147,6 +150,11 @@ int main(int argc, char *argv[]) {
 				SAVED_GAME_PATH = (char *)malloc(sizeof(char) * strlen(optarg) + 1);
 				strcpy(SAVED_GAME_PATH, optarg);
 				break;
+			case 'n':
+				if(fork())
+					return 0;
+				PRINT_STAT = FLAG_OFF;
+				break;
 			case '?':
 				printf("Type %s --help | %s -h for help\n", argv[0], argv[0]);
 				exit(7);
@@ -222,16 +230,42 @@ int main(int argc, char *argv[]) {
 			 	break;		
 			case QUIT:
 				/* print the game statistics before exiting (like a standard game) */ 
-				if(current->next == current) {
-					if(current->type == HUMAN)
-						printf("Game status:\n\tTotal Moves Played : %d\n\tTotal Players : %d (%d human, %d bots)\n\tPlayer %d won! Congrats!\n", moves, players_number + computer_players_number, players_number, computer_players_number, current->number);
-					else if(players_number != 0)
-						printf("Game status:\n\tTotal Moves Played : %d\n\tTotal Players : %d (%d human, %d bots)\n\tPlayer %d won (computer player)\nBetter Luck next time!\n", moves, players_number + computer_players_number, players_number, computer_players_number, current->number);	
+				if(PRINT_STAT) {
+					if(current->next == current) {
+						if(current->type == HUMAN)
+							printf(
+								"Game status:\n\tTotal Moves Played : %d\n\t"
+								"Total Players : %d (%d human, %d bots)\n\tPlayer %d won! Congrats!\n", 
+								moves, 
+								players_number + computer_players_number, 
+								players_number, 
+								computer_players_number, 
+								current->number
+							);
+						else if(players_number != 0)
+							printf(
+								"Game status:\n\tTotal Moves Played : %d\n\t"
+								"Total Players : %d (%d human, %d bots)\n\tPlayer %d won (computer player)\nBetter Luck next time!\n", 
+								moves, 
+								players_number + computer_players_number, 
+								players_number, 
+								computer_players_number,
+								current->number
+							);
+						else
+							printf(
+								"Game status:\n\tTotal Moves Played : %d\n\t"
+								"Total Players : %d (%d human, %d bots)\n\tPlayer %d won!\n", 
+								moves, 
+								players_number + computer_players_number, 
+								players_number, 
+								computer_players_number, 
+								current->number
+							);
+					}
 					else
-						printf("Game status:\n\tTotal Moves Played : %d\n\tTotal Players : %d (%d human, %d bots)\n\tPlayer %d won!\n", moves, players_number + computer_players_number, players_number, computer_players_number, current->number);	
+						printf("Game quit\n");		
 				}
-				else 
-					printf("Game quit\n");		
 				/* board and player row memory is dynamically alloted. */
 				/* So before ending the game program, that memory is needed to free */  
 				/* Free the malloced Resources */
@@ -248,5 +282,3 @@ int main(int argc, char *argv[]) {
 	/* Successfully exit the game */
 	return 0;
 }
-
-

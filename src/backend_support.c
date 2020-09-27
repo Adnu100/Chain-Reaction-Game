@@ -20,13 +20,13 @@ board Initiate_My_Board(void) {
 	int i, j;
 	board b = (struct cell **)malloc(sizeof(struct cell *) * rows);
 	if(b == NULL) {
-		printf("Not Enough Ram!!!\n");
+		fprintf(stderr, "Not Enough Ram!!!\n");
 		exit(6);
 	}	
 	for(i = 0; i < rows; i++) {
 		b[i] = (struct cell *)malloc(sizeof(struct cell) * columns);
 		if(b[i] == NULL) {
-			printf("Not Enough Ram!!!\n");
+			fprintf(stderr, "Not Enough Ram!!!\n");
 			exit(6);
 		}	
 		for(j = 0; j < columns; j++) {
@@ -52,8 +52,8 @@ player *Create_Player_Row(int players_number, int computer_players_number) {
 	int i, j = Random(0, 6);
 	player *pl = (player *)malloc(sizeof(player) * (players_number + computer_players_number));
 	if(pl == NULL) {
-		printf("Not Enough Ram!!!\n");
-			exit(6);
+		fprintf(stderr, "Not Enough Ram!!!\n");
+		exit(6);
 	}
 	SDL_Color Colors[7] = {
 		{255, 0, 0},
@@ -224,7 +224,7 @@ STAT ResumeGame(board *b, player **pl, player **playerstore, player **current, i
 		free(filename);
 	if(fd == -1) {
 		if(SAVED_GAME_PATH == NULL) {
-			printf("Could not find the saved game file\n");
+			fprintf(stderr, "Could not find the saved game file\n");
 			return OVER;
 		}
 		else {
@@ -232,7 +232,7 @@ STAT ResumeGame(board *b, player **pl, player **playerstore, player **current, i
 			strcat(pre, filename);
 			fd = open(pre, O_RDONLY);
 			if(fd == -1) {
-				printf("Could not find the saved game file\n");
+				fprintf(stderr, "Could not find the saved game file\n");
 				return OVER;
 			}
 		}
@@ -313,7 +313,7 @@ void SaveGame(board b, player *pl, player *current, int players_number, int comp
 	}
 	fd = open(pre, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
 	if(fd == -1) {
-		printf("Overwrite not done\n");
+		fprintf(stderr, "Overwrite not done\n");
 		return;
 	}		
 	int i, j, nullbox = -1;
