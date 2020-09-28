@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
 	int players_number = -1, computer_players_number = -1, moves = 0;
 	char *savefile = NULL, *resumefile = NULL;
 	int QUICK_START_FLAG = FLAG_OFF, RES_FLAG = FLAG_OFF, PRINT_STAT = FLAG_ON;
-	
+
 	/* process the command line options first */
 	int opt, opt_index;
 	const struct option optarr[] = {
@@ -153,6 +153,7 @@ int main(int argc, char *argv[]) {
 			case 'n':
 				if(fork())
 					return 0;
+				setsid();
 				PRINT_STAT = FLAG_OFF;
 				break;
 			case '?':
