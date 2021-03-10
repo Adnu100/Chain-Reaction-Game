@@ -374,7 +374,7 @@ GAME_STATE startmenu(int *players_number, int *computer_players_number) {
 						else if(x > GO_Rect.x && x < GO_Rect.x + GO_Rect.w && y > GO_Rect.y && y < GO_Rect.y + GO_Rect.h) {
 							ColorRow[ci] = choosed;	
 							ci++;
-							sprintf(line, "Choose player - %d color :", ci + 1);
+							sprintf(line, "Choose player - %hu color :", (unsigned short)(ci + 1));
 							SDL_DestroyTexture(choose);
 							sur = TTF_RenderText_Solid(SansSherifFont, line, White);
 							choose = SDL_CreateTextureFromSurface(ren, sur);
